@@ -13,7 +13,7 @@ describe("PluginMessageCommandManager", () => {
     const pluginData = {
       pluginName: "test",
       context: "guild",
-      getKnubInstance: () => ({ profiler: { addDataPoint: noop } }),
+      getVetyInstance: () => ({ profiler: { addDataPoint: noop } }),
     } as any;
 
     manager.setPluginData(pluginData);

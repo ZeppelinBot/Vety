@@ -1,4 +1,4 @@
 {
-	"name": "Knub development environment",
+	"name": "Vety development environment",
 	"image": "mcr.microsoft.com/devcontainers/javascript-node:24"
 }

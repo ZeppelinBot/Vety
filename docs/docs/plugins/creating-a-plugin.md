@@ -4,12 +4,12 @@ sidebar_position: 2
 
 # Creating a plugin
 
-Every Knub plugin is described by a **blueprint** – a plain object that tells Knub how to load the plugin and what
-features it exposes. You’ll almost always create blueprints with the helper functions exported from `knub`, as they
+Every Vety plugin is described by a **blueprint** – a plain object that tells Vety how to load the plugin and what
+features it exposes. You’ll almost always create blueprints with the helper functions exported from `vety`, as they
 provide strong typing and sensible defaults.
 
 ```ts
-import { guildPlugin } from "knub";
+import { guildPlugin } from "vety";
 
 const myGuildPlugin = guildPlugin({
   name: "my-plugin",
@@ -17,7 +17,7 @@ const myGuildPlugin = guildPlugin({
 });
 ```
 
-The helper call returns a blueprint that Knub can load. The same pattern works for global plugins by swapping in
+The helper call returns a blueprint that Vety can load. The same pattern works for global plugins by swapping in
 `globalPlugin()`.
 
 ## Defining the plugin type
@@ -26,7 +26,7 @@ Blueprint helpers become most useful when you describe your plugin with a **Plug
 your config, any custom override criteria, and the plugin’s internal state.
 
 ```ts
-import { BasePluginType, guildPlugin } from "knub";
+import { BasePluginType, guildPlugin } from "vety";
 import z from "zod";
 
 interface CooldownPluginType extends BasePluginType {
@@ -75,7 +75,7 @@ Guild and global plugins expose the same fields, with the exception that guild p
 
 ### Lifecycle hook order
 
-When Knub loads a plugin instance it executes the hooks in the following order:
+When Vety loads a plugin instance it executes the hooks in the following order:
 
 1. `beforeLoad`
 2. `beforeStart`
@@ -89,7 +89,7 @@ When unloading the plugin the order is:
 3. `afterUnload`
 
 Plugins that are only loaded because another plugin depends on them have `pluginData.loadedAsDependency === true`. They
-still execute hooks, but Knub will skip registering their commands and event listeners.
+still execute hooks, but Vety will skip registering their commands and event listeners.
 
 ## Public interfaces
 
@@ -127,7 +127,7 @@ error, which helps catch dependency ordering issues during development.
 ## Message command removals
 
 The optional `deletedMessageCommands` array removes commands that match the listed triggers (usually legacy aliases).
-Knub performs the removal before registering new commands, allowing you to ship migrations without manual cleanup.
+Vety performs the removal before registering new commands, allowing you to ship migrations without manual cleanup.
 See [Message commands](message-commands.md#deleted-commands) for full details.
 
 ## Global plugins
@@ -135,7 +135,7 @@ See [Message commands](message-commands.md#deleted-commands) for full details.
 Creating a global plugin mirrors the guild plugin process, except the plugin operates without a guild context:
 
 ```ts
-import { globalPlugin } from "knub";
+import { globalPlugin } from "vety";
 
 const dmForwarder = globalPlugin({
   name: "dm-forwarder",

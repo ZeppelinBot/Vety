@@ -7,8 +7,8 @@ export * from "./commands/messageCommands/messageCommandBlueprint.ts";
 export * from "./commands/slashCommands/slashCommandBlueprint.ts";
 export * from "./commands/slashCommands/slashCommandUtils.ts";
 export * from "./events/EventListenerBlueprint.ts";
-export { Knub } from "./Knub.ts";
 export * from "./plugins/PluginBlueprint.ts";
+export { Vety } from "./Vety.ts";
 
 export { configUtils };
 export { ConfigValidationError } from "./config/ConfigValidationError.ts";
@@ -35,10 +35,10 @@ export {
   AnyContext,
   GlobalContext,
   GuildContext,
-  KnubArgs,
-  KnubOptions,
   LoadedGlobalPlugin,
   LoadedGuildPlugin,
+  VetyArgs,
+  VetyOptions,
 } from "./types.ts";
 
 export { helpers };

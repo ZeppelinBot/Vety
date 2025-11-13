@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Message commands
 
-While slash commands are the modern Discord standard, Knub still supports classic prefix-based message commands. This
+While slash commands are the modern Discord standard, Vety still supports classic prefix-based message commands. This
 page explains how to declare message command blueprints, customise their behaviour, and take advantage of the helpers in
 `PluginMessageCommandManager`.
 
@@ -14,7 +14,7 @@ Message command blueprints are created with `guildPluginMessageCommand()` or `gl
 to a plugin blueprint via the `messageCommands` array.
 
 ```ts
-import { guildPlugin, guildPluginMessageCommand } from "knub";
+import { guildPlugin, guildPluginMessageCommand } from "vety";
 import z from "zod";
 
 const pingCommand = guildPluginMessageCommand({
@@ -39,7 +39,7 @@ handler receives a `MessageCommandMeta` object with parsed arguments, the trigge
 ### Signatures and argument parsing
 
 Message commands accept optional argument signatures from [`knub-command-manager`](https://www.npmjs.com/package/knub-command-manager).
-You can describe positional parameters, options, or rest arguments, and Knub will parse them before invoking your
+You can describe positional parameters, options, or rest arguments, and Vety will parse them before invoking your
 handler.
 
 ```ts
@@ -57,12 +57,12 @@ const sayCommand = guildPluginMessageCommand({
 });
 ```
 
-See the [`messageCommandUtils`](https://github.com/knub/knub/blob/main/src/commands/messageCommands/messageCommandUtils.ts)
+See the [`messageCommandUtils`](https://github.com/vety/vety/blob/main/src/commands/messageCommands/messageCommandUtils.ts)
 module for ready-made converters and helpers.
 
 ### Permissions and filters
 
-Knub automatically runs a pre-filter pipeline before executing the command:
+Vety automatically runs a pre-filter pipeline before executing the command:
 
 1. `restrictCommandSource` – Respects the blueprint’s `source` option (`"guild"`, `"dm"`, or both).
 2. `checkCommandPermission` – Resolves the `permission` string using the plugin configuration.
@@ -114,10 +114,10 @@ These hooks are a convenient place to keep metrics up to date or synchronise ext
 
 ## Manual command dispatch
 
-Knub automatically attaches a `messageCreate` listener for each plugin that registers message commands. Sometimes you
+Vety automatically attaches a `messageCreate` listener for each plugin that registers message commands. Sometimes you
 need more control – for example, when implementing aliases or rewriting the command content before execution.
 
-Use `knub.dispatchMessageCommands(message)` to run the standard dispatch pipeline manually. The helper ensures the
+Use `vety.dispatchMessageCommands(message)` to run the standard dispatch pipeline manually. The helper ensures the
 message is processed only once by marking it internally. Subsequent calls (including the default event listener) do
 nothing.
 
@@ -130,11 +130,11 @@ client.on("messageCreate", async (message) => {
     const rewrittenMessage = Object.create(message, {
       content: { value: rewrittenContent },
     });
-    await knub.dispatchMessageCommands(rewrittenMessage);
+    await vety.dispatchMessageCommands(rewrittenMessage);
     return;
   }
 
-  await knub.dispatchMessageCommands(message);
+  await vety.dispatchMessageCommands(message);
 });
 ```
 
@@ -142,7 +142,7 @@ client.on("messageCreate", async (message) => {
 > directly. The dispatcher handles global plugins, dependency-only plugins, and the “already processed” guard for you.
 
 If you need to know whether dispatch already happened, use `hasMessageCommandBeenDispatched(message)` from
-`messageCommandUtils`. This is the same check Knub performs internally.
+`messageCommandUtils`. This is the same check Vety performs internally.
 
 ## Advanced manager helpers
 
@@ -155,7 +155,7 @@ If you need to know whether dispatch already happened, use `hasMessageCommandBee
 - `onCommandAdded(listener)` / `onCommandDeleted(listener)` – Subscribe to lifecycle events. They return an unsubscribe
   function.
 
-You rarely construct the manager yourself – Knub injects it into `pluginData` – but these helpers give you the tools to
+You rarely construct the manager yourself – Vety injects it into `pluginData` – but these helpers give you the tools to
 implement migrations, analytics, and other custom behaviours without digging into internals.
 
 With these tools you can keep legacy message commands running smoothly, gradually migrate to slash commands, or build

@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Slash commands
 
-Like plugins, slash commands in Knub are plain JavaScript objects.
+Like plugins, slash commands in Vety are plain JavaScript objects.
 
 There are two helper functions, `guildPluginSlashCommand()` and `globalPluginSlashCommand()`,
 that can be used to create slash commands for guild plugins and global plugins respectively.
@@ -12,7 +12,7 @@ that can be used to create slash commands for guild plugins and global plugins r
 ## A basic slash command example
 
 ```ts
-import { guildPluginSlashCommand, slashOptions } from "knub";
+import { guildPluginSlashCommand, slashOptions } from "vety";
 
 // Use the helper function for auto-completions and type checks
 const echoCommand = guildPluginSlashCommand({

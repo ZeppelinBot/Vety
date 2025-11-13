@@ -12,7 +12,7 @@ const createFromDjsArgsObject = <Obj extends FromDjsArgsConstraint>(obj: Obj): O
 };
 
 /**
- * Each property is a function that converts DJS event listener arguments to Knub's event argument object.
+ * Each property is a function that converts DJS event listener arguments to Vety's event argument object.
  * @see https://github.com/discordjs/discord.js/blob/669c3cd/packages/discord.js/typings/index.d.ts#L4192
  */
 export const fromDjsArgs = createFromDjsArgsObject({

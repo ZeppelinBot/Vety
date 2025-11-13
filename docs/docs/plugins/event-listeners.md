@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Event listeners
 
-Like plugins, event handlers in Knub are plain JavaScript objects.
+Like plugins, event handlers in Vety are plain JavaScript objects.
 
 There are two helper functions, `guildPluginEventListener()` and `globalPluginEventListener()`,
 that can be used to create slash commands for guild plugins and global plugins respectively.

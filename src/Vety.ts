@@ -47,15 +47,15 @@ import type {
   GlobalPluginMap,
   GuildContext,
   GuildPluginMap,
-  KnubArgs,
-  KnubOptions,
   LoadedGlobalPlugin,
   LoadedGuildPlugin,
   LogFn,
+  VetyArgs,
+  VetyOptions,
 } from "./types.ts";
 import { get, notCallable } from "./utils.ts";
 
-const defaultKnubArgs: KnubArgs = {
+const defaultVetyArgs: VetyArgs = {
   guildPlugins: [],
   globalPlugins: [],
   options: {},
@@ -71,7 +71,7 @@ const defaultLogFn: LogFn = (level: string, ...args) => {
   }
 };
 
-export class Knub extends EventEmitter {
+export class Vety extends EventEmitter {
   public client: Client;
   protected eventRelay: EventRelay;
 
@@ -85,7 +85,7 @@ export class Knub extends EventEmitter {
   protected globalContextLoaded = false;
   protected globalContextLoadPromise = Promise.resolve();
 
-  protected options: KnubOptions;
+  protected options: VetyOptions;
 
   protected log: LogFn = defaultLogFn;
 
@@ -97,13 +97,13 @@ export class Knub extends EventEmitter {
 
   protected destroyPromise: Promise<void> | null = null;
 
-  constructor(client: Client, userArgs: Partial<KnubArgs>) {
+  constructor(client: Client, userArgs: Partial<VetyArgs>) {
     super();
 
     const args = {
-      ...defaultKnubArgs,
+      ...defaultVetyArgs,
       ...userArgs,
-    } satisfies KnubArgs;
+    } satisfies VetyArgs;
 
     this.client = client;
     this.eventRelay = new EventRelay(client, this.profiler);
@@ -145,7 +145,7 @@ export class Knub extends EventEmitter {
       customArgumentTypes: {},
       concurrentGuildLoadLimit: 10,
       pluginUnloadEventTimeoutMs: 1000 * 10,
-    } satisfies KnubOptions;
+    } satisfies VetyOptions;
 
     this.options = { ...defaultOptions, ...args.options };
 
@@ -285,7 +285,7 @@ export class Knub extends EventEmitter {
 
       loadedAsDependency,
 
-      getKnubInstance: () => this,
+      getVetyInstance: () => this,
       hasGlobalPlugin: notCallable("hasGlobalPlugin is not available yet"),
       getGlobalPlugin: notCallable("getGlobalPlugin is not available yet"),
       hasPlugin: notCallable("hasPlugin is not available yet"),
@@ -359,7 +359,7 @@ export class Knub extends EventEmitter {
 
       loadedAsDependency,
 
-      getKnubInstance: () => this,
+      getVetyInstance: () => this,
       hasGlobalPlugin: notCallable("hasGlobalPlugin is not available yet"),
       getGlobalPlugin: notCallable("getGlobalPlugin is not available yet"),
       hasPlugin: notCallable("hasPlugin is not available yet"),

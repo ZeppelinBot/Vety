@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 import { themes } from "prism-react-renderer";
 
 const config: Config = {
-  title: 'Knub',
+  title: 'Vety',
   tagline: 'Modern TypeScript framework for creating Discord bots',
   url: 'https://knub.zeppelin.gg',
   baseUrl: '/',
@@ -60,7 +60,7 @@ const config: Config = {
   themeConfig:
     ({
       navbar: {
-        title: 'Knub',
+        title: 'Vety',
         logo: {
           alt: 'My Site Logo',
           src: 'img/logo.svg',
@@ -73,7 +73,7 @@ const config: Config = {
             label: 'Docs',
           },
           {
-            href: 'https://github.com/Dragory/Knub',
+            href: 'https://github.com/ZeppelinBot/Vety',
             label: 'GitHub',
             position: 'right',
           },

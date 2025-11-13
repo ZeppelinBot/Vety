@@ -6,7 +6,7 @@ sidebar_position: 3
 
 ```ts
 import { Client, GatewayIntentBits } from "discord.js";
-import { Knub, guildPlugin, guildPluginSlashCommand, slashOptions } from "knub";
+import { Vety, guildPlugin, guildPluginSlashCommand, slashOptions } from "vety";
 import z from "zod";
 
 // Create a command
@@ -37,14 +37,14 @@ const djsClient = new Client({
   ],
 });
 
-// Tie it all together with Knub
-const knub = new Knub(djsClient, {
+// Tie it all together with Vety
+const vety = new Vety(djsClient, {
   guildPlugins: [
     myPlugin,
   ],
 });
 
-// Initialize Knub and connect to the bot gateway
-knub.initialize();
+// Initialize Vety and connect to the bot gateway
+vety.initialize();
 djsClient.login("YOUR TOKEN HERE");
 ```

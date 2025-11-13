@@ -229,7 +229,7 @@ export class PluginMessageCommandManager<TPluginData extends AnyPluginData<any>>
       typeof matchedCommand.originalTriggers[0] === "string"
         ? matchedCommand.originalTriggers[0]
         : matchedCommand.originalTriggers[0].source;
-    this.pluginData!.getKnubInstance().profiler.addDataPoint(`command:${commandName}`, performance.now() - startTime);
+    this.pluginData!.getVetyInstance().profiler.addDataPoint(`command:${commandName}`, performance.now() - startTime);
   }
 
   private emitCommandAdded(event: CommandLifecycleEvent<TPluginData>): void {

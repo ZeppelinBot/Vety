@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Overview
 
-A bot built on Knub consists of one or more **plugins**.
+A bot built on Vety consists of one or more **plugins**.
 These plugins can either be **guild plugins** or **global plugins**:
 
 * **Guild plugins** are loaded and configured separately for each server.  
@@ -15,7 +15,7 @@ These plugins can either be **guild plugins** or **global plugins**:
 
 Each plugin consists of **commands** and **event listeners**:
 
-* **Commands** are, well, commands. Knub supports both [slash commands](slash-commands.md) and message commands, though the former is recommended for any new bots.
+* **Commands** are, well, commands. Vety supports both [slash commands](slash-commands.md) and message commands, though the former is recommended for any new bots.
 * **Event listeners** run in response to an event from the bot gateway. This is comparable to a plain `client.on("eventName", ...)` in discord.js.
 
 ## Program flow
@@ -23,7 +23,7 @@ Each plugin consists of **commands** and **event listeners**:
 ```mermaid
 flowchart TD;
     start[Program start]-->init
-    init["knub.initialize()"]-->connect
+    init["vety.initialize()"]-->connect
     connect["djsClient.login()"]-->available
     available[Guild becomes available]
     

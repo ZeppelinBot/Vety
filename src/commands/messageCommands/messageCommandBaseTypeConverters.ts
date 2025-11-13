@@ -176,7 +176,7 @@ export const baseCommandParameterTypeHelpers = {
   bool,
   switchOption,
 
-  // Knub-specific types
+  // Vety-specific types
   // knub-command-manager also has a number() helper, but we have slightly different error handling here
   number: createTypeHelper<number>(messageCommandBaseTypeConverters.number),
   user: createTypeHelper<User>(messageCommandBaseTypeConverters.user),

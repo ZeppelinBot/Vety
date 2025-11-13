@@ -24,9 +24,9 @@ import {
   UserManager,
   type WebSocketManager,
 } from "discord.js";
-import { Knub } from "./Knub.ts";
-import type { KnubArgs } from "./types.ts";
+import type { VetyArgs } from "./types.ts";
 import { noop } from "./utils.ts";
+import { Vety } from "./Vety.ts";
 
 const persisted = new WeakMap<any, Map<string | number | symbol, any>>();
 function persist<T, TProp extends keyof T>(that: T, prop: TProp, initial: T[TProp]): T[TProp] {
@@ -98,46 +98,46 @@ export function createMockClient(): Client<true> {
 }
 
 /**
- * Helper function to set up Knub with auto-cleanup
+ * Helper function to set up Vety with auto-cleanup
  */
-export async function withKnub(
+export async function withVety(
   mochaDoneFn: () => void,
-  fn: (createKnub: (args: Partial<KnubArgs>) => Knub, done: () => void) => void | Promise<void>,
+  fn: (createVety: (args: Partial<VetyArgs>) => Vety, done: () => void) => void | Promise<void>,
 ): Promise<void> {
-  let knub: Knub | null = null;
-  const createKnub = (args: Partial<KnubArgs>) => {
+  let vety: Vety | null = null;
+  const createVety = (args: Partial<VetyArgs>) => {
     const client = createMockClient();
-    knub = new Knub(client, args);
-    return knub;
+    vety = new Vety(client, args);
+    return vety;
   };
   const done = () => {
-    if (!knub) {
-      throw new Error("createKnub() was not called in withKnub()");
+    if (!vety) {
+      throw new Error("createVety() was not called in withVety()");
     }
-    void knub.destroy();
+    void vety.destroy();
     mochaDoneFn();
   };
   try {
-    await fn(createKnub, done);
+    await fn(createVety, done);
   } catch (e) {
-    // TS doing some weird inference here, narrowing `knub` to `never`, hence the assertation
-    await (knub as Knub | null)?.destroy();
+    // TS doing some weird inference here, narrowing `vety` to `never`, hence the assertation
+    await (vety as Vety | null)?.destroy();
     throw e;
   }
 }
 
 /**
- * Most tests need to initialize Knub, so this is a helper function to handle that
+ * Most tests need to initialize Vety, so this is a helper function to handle that
  */
-export async function initializeKnub(knub: Knub): Promise<void> {
+export async function initializeVety(vety: Vety): Promise<void> {
   return new Promise<void>((resolve) => {
-    knub.once("loadingFinished", () => {
+    vety.once("loadingFinished", () => {
       resolve();
     });
-    knub.initialize();
-    knub.client.emit("connect");
-    knub.client.emit("shardReady", 0, undefined);
-    knub.client.emit("ready", knub.client as Client<true>);
+    vety.initialize();
+    vety.client.emit("connect");
+    vety.client.emit("shardReady", 0, undefined);
+    vety.client.emit("ready", vety.client as Client<true>);
   });
 }
 

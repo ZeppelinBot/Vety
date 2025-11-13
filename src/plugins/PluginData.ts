@@ -6,8 +6,8 @@ import type { PluginConfigManager } from "../config/PluginConfigManager.ts";
 import type { CooldownManager } from "../cooldowns/CooldownManager.ts";
 import type { GlobalPluginEventManager } from "../events/GlobalPluginEventManager.ts";
 import type { GuildPluginEventManager } from "../events/GuildPluginEventManager.ts";
-import type { Knub } from "../Knub.ts";
 import type { LockManager } from "../locks/LockManager.ts";
+import type { Vety } from "../Vety.ts";
 import type { BasePluginBlueprint } from "./PluginBlueprint.ts";
 import type { BasePluginType } from "./pluginTypes.ts";
 import type { PluginPublicInterface } from "./pluginUtils.ts";
@@ -67,9 +67,9 @@ export type BasePluginData<TPluginType extends BasePluginType> = {
   loadedAsDependency: boolean;
 
   /**
-   * Get the active Knub instance
+   * Get the active Vety instance
    */
-  getKnubInstance: () => Knub;
+  getVetyInstance: () => Vety;
 
   /**
    * The full config for the plugin's context. Use `config` property for plugin config values.

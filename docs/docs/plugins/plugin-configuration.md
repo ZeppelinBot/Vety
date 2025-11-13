@@ -7,7 +7,7 @@ sidebar_position: 3
 Each plugin can be configured individually for every guild (server). Plugin configuration travels through the value
 returned from [`getConfig`](../getting-started/configuration.md) and is validated against the blueprint’s
 `configSchema` on load. Guild and global plugins share the same configuration format; the only difference is which
-context Knub evaluates overrides against.
+context Vety evaluates overrides against.
 
 ## Server configuration shape
 
@@ -46,7 +46,7 @@ A typical guild configuration looks like the following. Notice how each plugin g
 }
 ```
 
-- `prefix` – Optional. Overrides the message command prefix for this guild. Knub falls back to `@BotName ` if omitted.
+- `prefix` – Optional. Overrides the message command prefix for this guild. Vety falls back to `@BotName ` if omitted.
 - `levels` – Optional. Custom permission levels used by overrides and permission checks. Keys are user/role IDs.
 - `plugins` – Required. Map of plugin name → plugin options.
   - `config` – An object that must satisfy the plugin’s `configSchema`.
@@ -60,13 +60,13 @@ Overrides allow you to tweak part of the plugin configuration for specific condi
 threads, categories, custom predicates, and more. Overrides declared in the guild config are merged with the
 `defaultOverrides` defined on the plugin blueprint unless `replaceDefaultOverrides` is set.
 
-Overrides are evaluated automatically when Knub runs permission and cooldown checks for message commands or when you
+Overrides are evaluated automatically when Vety runs permission and cooldown checks for message commands or when you
 query configuration via helpers such as `pluginData.config.getForMember(member)`.
 
 For example, given the configuration above:
 
 ```ts
-import { guildPluginSlashCommand } from "knub";
+import { guildPluginSlashCommand } from "vety";
 
 const whoIsCoolCommand = guildPluginSlashCommand({
   name: "whoiscool",
@@ -141,11 +141,11 @@ The overrides above (1) grant kick permissions to anyone with level ≥ 50, (2) 
 
 ## Validating configuration with `configSchema`
 
-Knub relies on the `configSchema` defined on your plugin blueprint to validate untrusted configuration and provide type
+Vety relies on the `configSchema` defined on your plugin blueprint to validate untrusted configuration and provide type
 information throughout your code. You typically use zod for this:
 
 ```ts
-import { BasePluginType, guildPlugin } from "knub";
+import { BasePluginType, guildPlugin } from "vety";
 import z from "zod";
 
 const configSchema = z.strictObject({

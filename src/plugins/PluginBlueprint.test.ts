@@ -30,9 +30,9 @@ import {
   createMockRole,
   createMockTextChannel,
   createMockUser,
-  initializeKnub,
+  initializeVety,
   sleep,
-  withKnub,
+  withVety,
 } from "../testUtils.ts";
 import { noop } from "../utils.ts";
 import { type AnyPluginBlueprint, type GuildPluginBlueprint, globalPlugin, guildPlugin } from "./PluginBlueprint.ts";
@@ -44,7 +44,7 @@ type AssertEquals<TActual, TExpected> = TActual extends TExpected ? true : false
 describe("PluginBlueprint", () => {
   describe("Commands and events", () => {
     it("loads commands and events", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad = guildPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -65,7 +65,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToLoad],
           options: {
             autoRegisterApplicationCommands: false,
@@ -75,15 +75,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("guild events are only passed to the matching guild", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad = guildPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -99,7 +99,7 @@ describe("PluginBlueprint", () => {
           ],
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -108,34 +108,34 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild0 = createMockGuild(knub.client);
-        const guild1 = createMockGuild(knub.client);
+        const guild0 = createMockGuild(vety.client);
+        const guild1 = createMockGuild(vety.client);
 
         const guildCounts = {
           [guild0.id]: 0,
           [guild1.id]: 0,
         };
 
-        knub.client.ws.emit("GUILD_CREATE", guild0);
-        knub.client.ws.emit("GUILD_CREATE", guild1);
+        vety.client.ws.emit("GUILD_CREATE", guild0);
+        vety.client.ws.emit("GUILD_CREATE", guild1);
         await sleep(30);
 
-        const user0 = createMockUser(knub.client);
-        const user1 = createMockUser(knub.client);
-        const guild0Channel = createMockTextChannel(knub.client, guild0.id);
-        const guild1Channel = createMockTextChannel(knub.client, guild1.id);
+        const user0 = createMockUser(vety.client);
+        const user1 = createMockUser(vety.client);
+        const guild0Channel = createMockTextChannel(vety.client, guild0.id);
+        const guild1Channel = createMockTextChannel(vety.client, guild1.id);
 
-        const guild0Message1 = createMockMessage(knub.client, guild0Channel, user0, { content: "foo" });
-        const guild0Message2 = createMockMessage(knub.client, guild0Channel, user0, { content: "bar" });
-        const guild1Message1 = createMockMessage(knub.client, guild1Channel, user1, { content: "foo" });
-        const guild1Message2 = createMockMessage(knub.client, guild1Channel, user1, { content: "bar" });
+        const guild0Message1 = createMockMessage(vety.client, guild0Channel, user0, { content: "foo" });
+        const guild0Message2 = createMockMessage(vety.client, guild0Channel, user0, { content: "bar" });
+        const guild1Message1 = createMockMessage(vety.client, guild1Channel, user1, { content: "foo" });
+        const guild1Message2 = createMockMessage(vety.client, guild1Channel, user1, { content: "bar" });
 
-        knub.client.emit("messageCreate", guild0Message1);
-        knub.client.emit("messageCreate", guild0Message2);
-        knub.client.emit("messageCreate", guild1Message1);
-        knub.client.emit("messageCreate", guild1Message2);
+        vety.client.emit("messageCreate", guild0Message1);
+        vety.client.emit("messageCreate", guild0Message2);
+        vety.client.emit("messageCreate", guild1Message1);
+        vety.client.emit("messageCreate", guild1Message2);
         await sleep(30);
 
         assert.strictEqual(guildCounts[guild0.id], 2);
@@ -145,7 +145,7 @@ describe("PluginBlueprint", () => {
     });
 
     it("global events are not passed to guild event listeners", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad = guildPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -163,7 +163,7 @@ describe("PluginBlueprint", () => {
         });
 
         const client = createMockClient();
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -172,7 +172,7 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
         const guild0 = createMockGuild(client);
         client.ws.emit("GUILD_CREATE", guild0);
@@ -187,7 +187,7 @@ describe("PluginBlueprint", () => {
     });
 
     it("global events are passed to global event listeners", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad = globalPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -202,21 +202,21 @@ describe("PluginBlueprint", () => {
           ],
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const user = createMockUser(knub.client);
-        knub.client.emit("userUpdate", user, user);
+        const user = createMockUser(vety.client);
+        vety.client.emit("userUpdate", user, user);
       });
     });
 
     it("guild events are passed to global event listeners", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad = globalPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -233,26 +233,26 @@ describe("PluginBlueprint", () => {
           ],
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
+        const guild = createMockGuild(vety.client);
 
-        const user = createMockUser(knub.client);
-        const channel = createMockTextChannel(knub.client, guild.id);
-        const message = createMockMessage(knub.client, channel, user);
-        knub.client.emit("messageCreate", message);
+        const user = createMockUser(vety.client);
+        const channel = createMockTextChannel(vety.client, guild.id);
+        const message = createMockMessage(vety.client, channel, user);
+        vety.client.emit("messageCreate", message);
       });
     });
 
     describe("Message commands", () => {
       it("command permissions", (mochaDone) => {
-        withKnub(mochaDone, async (createKnub, done) => {
+        withVety(mochaDone, async (createVety, done) => {
           const infoCmdCallUsers: string[] = [];
           const serverCmdCallUsers: string[] = [];
           const pingCmdCallUsers: string[] = [];
@@ -295,7 +295,7 @@ describe("PluginBlueprint", () => {
             ],
           });
 
-          const knub = createKnub({
+          const vety = createVety({
             guildPlugins: [TestPlugin],
             options: {
               getEnabledGuildPlugins() {
@@ -334,43 +334,43 @@ describe("PluginBlueprint", () => {
             },
           });
 
-          const user1 = createMockUser(knub.client);
-          const user2 = createMockUser(knub.client);
-          const user3 = createMockUser(knub.client);
-          const guild = createMockGuild(knub.client);
+          const user1 = createMockUser(vety.client);
+          const user2 = createMockUser(vety.client);
+          const user3 = createMockUser(vety.client);
+          const guild = createMockGuild(vety.client);
           const role = createMockRole(guild);
 
-          await initializeKnub(knub);
+          await initializeVety(vety);
 
           void createMockMember(guild, user3, { roles: [role.id] });
 
-          knub.client.ws.emit("GUILD_CREATE", guild);
+          vety.client.ws.emit("GUILD_CREATE", guild);
           await sleep(10);
 
-          const channel = createMockTextChannel(knub.client, guild.id);
+          const channel = createMockTextChannel(vety.client, guild.id);
 
           // !info
-          const infoFromUser1Msg = createMockMessage(knub.client, channel, user1, { content: "!info" });
-          knub.client.emit("messageCreate", infoFromUser1Msg);
+          const infoFromUser1Msg = createMockMessage(vety.client, channel, user1, { content: "!info" });
+          vety.client.emit("messageCreate", infoFromUser1Msg);
           await sleep(10);
-          const infoFromUser2Msg = createMockMessage(knub.client, channel, user2, { content: "!info" });
-          knub.client.emit("messageCreate", infoFromUser2Msg);
+          const infoFromUser2Msg = createMockMessage(vety.client, channel, user2, { content: "!info" });
+          vety.client.emit("messageCreate", infoFromUser2Msg);
           await sleep(10);
 
           // !server
-          const serverFromUser1Msg = createMockMessage(knub.client, channel, user1, { content: "!server" });
-          knub.client.emit("messageCreate", serverFromUser1Msg);
+          const serverFromUser1Msg = createMockMessage(vety.client, channel, user1, { content: "!server" });
+          vety.client.emit("messageCreate", serverFromUser1Msg);
           await sleep(10);
-          const serverFromUser2Msg = createMockMessage(knub.client, channel, user2, { content: "!server" });
-          knub.client.emit("messageCreate", serverFromUser2Msg);
+          const serverFromUser2Msg = createMockMessage(vety.client, channel, user2, { content: "!server" });
+          vety.client.emit("messageCreate", serverFromUser2Msg);
           await sleep(10);
 
           // !ping
-          const pingFromUser1Msg = createMockMessage(knub.client, channel, user1, { content: "!ping" });
-          knub.client.emit("messageCreate", pingFromUser1Msg);
+          const pingFromUser1Msg = createMockMessage(vety.client, channel, user1, { content: "!ping" });
+          vety.client.emit("messageCreate", pingFromUser1Msg);
           await sleep(10);
-          const pingFromUser3Msg = createMockMessage(knub.client, channel, user3, { content: "!ping" });
-          knub.client.emit("messageCreate", pingFromUser3Msg);
+          const pingFromUser3Msg = createMockMessage(vety.client, channel, user3, { content: "!ping" });
+          vety.client.emit("messageCreate", pingFromUser3Msg);
           await sleep(10);
 
           assert.deepStrictEqual(infoCmdCallUsers, [user1.id]);
@@ -453,7 +453,7 @@ describe("PluginBlueprint", () => {
 
   describe("Lifecycle hooks", () => {
     it("GuildPlugin beforeLoad()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -463,7 +463,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -472,15 +472,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("GlobalPlugin beforeLoad()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -490,18 +490,18 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
       });
     });
 
     it("GuildPlugin beforeStart()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -511,7 +511,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -520,15 +520,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("GlobalPlugin beforeStart()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -538,18 +538,18 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
       });
     });
 
     it("GuildPlugin afterLoad()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -559,7 +559,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -568,15 +568,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("GlobalPlugin afterLoad()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -586,25 +586,25 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
       });
     });
 
     it("GuildPlugin beforeUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const beforeUnloadCalled = false;
         const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-unload",
           configSchema: z.strictObject({}),
 
           afterLoad() {
-            knub.client.emit("guildUnavailable", guild);
+            vety.client.emit("guildUnavailable", guild);
           },
 
           beforeUnload() {
@@ -612,7 +612,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToUnload],
           options: {
             getEnabledGuildPlugins() {
@@ -621,15 +621,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("GlobalPlugin beforeUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -639,25 +639,25 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
-        void knub.destroy();
+        await initializeVety(vety);
+        void vety.destroy();
       });
     });
 
     it("GuildPlugin afterUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-unload",
           configSchema: z.strictObject({}),
 
           afterLoad() {
-            knub.client.emit("guildUnavailable", guild);
+            vety.client.emit("guildUnavailable", guild);
           },
 
           afterUnload() {
@@ -665,7 +665,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToUnload],
           options: {
             getEnabledGuildPlugins() {
@@ -674,15 +674,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("GlobalPlugin afterUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -692,19 +692,19 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
-        void knub.destroy();
+        await initializeVety(vety);
+        void vety.destroy();
       });
     });
 
     it("GuildPlugin afterLoad() runs after beforeLoad()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         let beforeLoadCalled = false;
 
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
@@ -721,7 +721,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -730,15 +730,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("GlobalPlugin afterLoad() runs after beforeLoad()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         let beforeLoadCalled = false;
 
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
@@ -755,18 +755,18 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
       });
     });
 
     it("GuildPlugin beforeUnload() runs before afterUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         let beforeUnloadCalled = false;
 
         const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
@@ -774,7 +774,7 @@ describe("PluginBlueprint", () => {
           configSchema: z.strictObject({}),
 
           afterLoad() {
-            knub.client.emit("guildUnavailable", guild);
+            vety.client.emit("guildUnavailable", guild);
           },
 
           beforeUnload() {
@@ -787,7 +787,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToUnload],
           options: {
             getEnabledGuildPlugins() {
@@ -796,15 +796,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("GlobalPlugin beforeUnload() runs before afterUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         let beforeUnloadCalled = false;
 
         const PluginToUnload: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
@@ -821,19 +821,19 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToUnload],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
-        void knub.destroy();
+        await initializeVety(vety);
+        void vety.destroy();
       });
     });
 
     it("hasPlugin() and getPlugin() are unavailable in GuildPlugin beforeLoad()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -845,7 +845,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -854,15 +854,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("hasPlugin() and getPlugin() are unavailable in GlobalPlugin beforeLoad()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -874,24 +874,24 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
       });
     });
 
     it("hasPlugin() and getPlugin() are unavailable in GuildPlugin afterUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-unload",
           configSchema: z.strictObject({}),
 
           afterLoad() {
-            knub.client.emit("guildUnavailable", guild);
+            vety.client.emit("guildUnavailable", guild);
           },
 
           afterUnload(pluginData) {
@@ -901,7 +901,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToUnload],
           options: {
             getEnabledGuildPlugins() {
@@ -910,15 +910,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("hasPlugin() and getPlugin() are unavailable in GlobalPlugin afterUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -930,19 +930,19 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
-        void knub.destroy();
+        await initializeVety(vety);
+        void vety.destroy();
       });
     });
 
     it("GuildPlugin is unavailable to other plugins during afterUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginWithPublicInterface = guildPlugin<BasePluginType>()({
           name: "plugin-with-public-interface",
           configSchema: z.strictObject({}),
@@ -957,7 +957,7 @@ describe("PluginBlueprint", () => {
           configSchema: z.strictObject({}),
           dependencies: () => [PluginWithPublicInterface],
           afterLoad() {
-            knub.client.emit("guildUnavailable", guild);
+            vety.client.emit("guildUnavailable", guild);
           },
           afterUnload(pluginData) {
             assert.throws(() => pluginData.getPlugin(PluginWithPublicInterface));
@@ -965,7 +965,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginWithPublicInterface, PluginWithTests],
           options: {
             getEnabledGuildPlugins() {
@@ -974,15 +974,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("GlobalPlugin is unavailable to other plugins during afterUnload()", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const PluginWithPublicInterface = globalPlugin<BasePluginType>()({
           name: "plugin-with-public-interface",
           configSchema: z.strictObject({}),
@@ -997,7 +997,7 @@ describe("PluginBlueprint", () => {
           configSchema: z.strictObject({}),
           dependencies: () => [PluginWithPublicInterface],
           afterLoad() {
-            void knub.destroy();
+            void vety.destroy();
           },
           afterUnload(pluginData) {
             assert.throws(() => pluginData.getPlugin(PluginWithPublicInterface));
@@ -1005,18 +1005,18 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginWithPublicInterface, PluginWithTests],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
       });
     });
 
     it("GuildPlugin hook order", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         let lastCalledHook: string | null = null;
 
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
@@ -1033,7 +1033,7 @@ describe("PluginBlueprint", () => {
           afterLoad() {
             assert.strictEqual(lastCalledHook, "beforeStart");
             lastCalledHook = "afterLoad";
-            knub.client.emit("guildUnavailable", guild);
+            vety.client.emit("guildUnavailable", guild);
           },
           beforeUnload() {
             assert.strictEqual(lastCalledHook, "afterLoad");
@@ -1045,7 +1045,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -1054,15 +1054,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("GlobalPlugin hook order", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         let lastCalledHook: string | null = null;
 
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
@@ -1079,7 +1079,7 @@ describe("PluginBlueprint", () => {
           afterLoad() {
             assert.strictEqual(lastCalledHook, "beforeStart");
             lastCalledHook = "afterLoad";
-            void knub.destroy();
+            void vety.destroy();
           },
           beforeUnload() {
             assert.strictEqual(lastCalledHook, "afterLoad");
@@ -1091,20 +1091,20 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [PluginToLoad],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
       });
     });
   });
 
   describe("Dependencies", () => {
     it("hasPlugin", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const DependencyToLoad = guildPlugin({
           name: "dependency-to-load",
           configSchema: z.strictObject({}),
@@ -1127,7 +1127,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [DependencyToLoad, PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -1136,15 +1136,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("getPlugin", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         interface DependencyPluginType extends BasePluginType {
           state: { value: number };
         }
@@ -1177,7 +1177,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [DependencyToLoad, PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -1186,15 +1186,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("hasGlobalPlugin", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const SomeGlobalPlugin = globalPlugin({
           name: "some-global-plugin",
           configSchema: z.strictObject({}),
@@ -1216,7 +1216,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [SomeGlobalPlugin],
           guildPlugins: [SomeGuildPlugin],
           options: {
@@ -1226,15 +1226,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("getPlugin", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const SomeGlobalPlugin = globalPlugin({
           name: "some-global-plugin",
           configSchema: z.strictObject({}),
@@ -1256,7 +1256,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [SomeGlobalPlugin],
           guildPlugins: [SomeGuildPlugin],
           options: {
@@ -1266,15 +1266,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("getPlugin has correct pluginData", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const DependencyToLoad = guildPlugin({
           name: "dependency-to-load",
           configSchema: z.strictObject({
@@ -1306,7 +1306,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [DependencyToLoad, PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -1315,15 +1315,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("automatic dependency loading", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const DependencyToLoad = guildPlugin({
           name: "dependency-to-load",
           configSchema: z.strictObject({}),
@@ -1347,7 +1347,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [DependencyToLoad, OtherDependencyToLoad, PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -1356,15 +1356,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("transitive dependencies", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const DependencyTwo = guildPlugin({
           name: "dependency-two",
           configSchema: z.strictObject({}),
@@ -1388,7 +1388,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [DependencyOne, DependencyTwo, PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -1397,15 +1397,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("plugins loaded as dependencies do not load commands or events", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const Dependency = guildPlugin({
           name: "dependency",
           configSchema: z.strictObject({}),
@@ -1429,7 +1429,7 @@ describe("PluginBlueprint", () => {
           dependencies: () => [Dependency],
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [Dependency, PluginToLoad],
           options: {
             getEnabledGuildPlugins() {
@@ -1438,17 +1438,17 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
   });
 
   describe("Custom overrides", () => {
     it("Synchronous custom overrides", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         let commandTriggers = 0;
 
         interface PluginType extends BasePluginType {
@@ -1478,14 +1478,14 @@ describe("PluginBlueprint", () => {
           ],
 
           async afterLoad() {
-            const channel = createMockTextChannel(knub.client, guild.id);
+            const channel = createMockTextChannel(vety.client, guild.id);
 
-            const message1 = createMockMessage(knub.client, channel, user1, { content: "!foo" });
-            knub.client.emit("messageCreate", message1);
+            const message1 = createMockMessage(vety.client, channel, user1, { content: "!foo" });
+            vety.client.emit("messageCreate", message1);
             await sleep(30);
 
-            const message2 = createMockMessage(knub.client, channel, user2, { content: "!foo" });
-            knub.client.emit("messageCreate", message2);
+            const message2 = createMockMessage(vety.client, channel, user2, { content: "!foo" });
+            vety.client.emit("messageCreate", message2);
             await sleep(30);
 
             assert.equal(commandTriggers, 1);
@@ -1493,7 +1493,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [TestPlugin],
           options: {
             getEnabledGuildPlugins() {
@@ -1522,18 +1522,18 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const user1 = createMockUser(knub.client);
-        const user2 = createMockUser(knub.client);
+        const user1 = createMockUser(vety.client);
+        const user2 = createMockUser(vety.client);
 
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("Asynchronous custom overrides", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         let commandTriggers = 0;
 
         interface PluginType extends BasePluginType {
@@ -1566,14 +1566,14 @@ describe("PluginBlueprint", () => {
           ],
 
           async afterLoad() {
-            const channel = createMockTextChannel(knub.client, guild.id);
+            const channel = createMockTextChannel(vety.client, guild.id);
 
-            const message1 = createMockMessage(knub.client, channel, user1, { content: "!foo" });
-            knub.client.emit("messageCreate", message1);
+            const message1 = createMockMessage(vety.client, channel, user1, { content: "!foo" });
+            vety.client.emit("messageCreate", message1);
             await sleep(30);
 
-            const message2 = createMockMessage(knub.client, channel, user2, { content: "!foo" });
-            knub.client.emit("messageCreate", message2);
+            const message2 = createMockMessage(vety.client, channel, user2, { content: "!foo" });
+            vety.client.emit("messageCreate", message2);
             await sleep(30);
 
             assert.equal(commandTriggers, 1);
@@ -1582,7 +1582,7 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [TestPlugin],
           options: {
             getEnabledGuildPlugins() {
@@ -1611,20 +1611,20 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const user1 = createMockUser(knub.client);
-        const user2 = createMockUser(knub.client);
+        const user1 = createMockUser(vety.client);
+        const user2 = createMockUser(vety.client);
 
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
   });
 
   describe("Custom argument types", () => {
     it("Custom argument types", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const types = {
           foo: (value, ctx) => {
             return `${value}-${ctx.pluginData.guild.id}`;
@@ -1648,14 +1648,14 @@ describe("PluginBlueprint", () => {
           ],
 
           afterLoad() {
-            const channel = createMockTextChannel(knub.client, guild.id);
-            const user = createMockUser(knub.client);
-            const msg = createMockMessage(knub.client, channel, user, { content: "!foo bar" });
-            knub.client.emit("messageCreate", msg);
+            const channel = createMockTextChannel(vety.client, guild.id);
+            const user = createMockUser(vety.client);
+            const msg = createMockMessage(vety.client, channel, user, { content: "!foo bar" });
+            vety.client.emit("messageCreate", msg);
           },
         });
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [TestPlugin],
           options: {
             getEnabledGuildPlugins() {
@@ -1669,17 +1669,17 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
   });
 
   describe("Misc", () => {
     it("pluginData contains everything (guild plugin)", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const TestPlugin: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "test-plugin",
           configSchema: z.strictObject({}),
@@ -1697,7 +1697,7 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [TestPlugin],
           options: {
             getEnabledGuildPlugins() {
@@ -1706,15 +1706,15 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
 
     it("pluginData contains everything (global plugin)", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         const TestPlugin: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "test-plugin",
           configSchema: z.strictObject({}),
@@ -1732,28 +1732,28 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           globalPlugins: [TestPlugin],
           options: {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
       });
     });
 
     it("event handlers are unloaded on plugin unload", (mochaDone) => {
-      withKnub(mochaDone, async (createKnub, done) => {
+      withVety(mochaDone, async (createVety, done) => {
         let msgEvFnCallNum = 0;
 
         const messageEv = guildPluginEventListener({
           event: "messageCreate",
           listener() {
             msgEvFnCallNum++;
-            knub.client.emit("guildUnavailable", guild);
+            vety.client.emit("guildUnavailable", guild);
             sleep(30).then(async () => {
-              const msg2 = createMockMessage(knub.client, textChannel, author, { content: "hi!" });
-              knub.client.emit("messageCreate", msg2);
+              const msg2 = createMockMessage(vety.client, textChannel, author, { content: "hi!" });
+              vety.client.emit("messageCreate", msg2);
               await sleep(30);
 
               assert.strictEqual(msgEvFnCallNum, 1);
@@ -1768,12 +1768,12 @@ describe("PluginBlueprint", () => {
           configSchema: z.strictObject({}),
           events: [messageEv],
           afterLoad() {
-            const msg = createMockMessage(knub.client, textChannel, author, { content: "hi!" });
-            knub.client.emit("messageCreate", msg);
+            const msg = createMockMessage(vety.client, textChannel, author, { content: "hi!" });
+            vety.client.emit("messageCreate", msg);
           },
         };
 
-        const knub = createKnub({
+        const vety = createVety({
           guildPlugins: [PluginToUnload],
           options: {
             getEnabledGuildPlugins() {
@@ -1782,12 +1782,12 @@ describe("PluginBlueprint", () => {
             logFn: noop,
           },
         });
-        await initializeKnub(knub);
+        await initializeVety(vety);
 
-        const guild = createMockGuild(knub.client);
-        const textChannel = createMockTextChannel(knub.client, guild.id);
-        const author = createMockUser(knub.client);
-        knub.client.ws.emit("GUILD_CREATE", guild);
+        const guild = createMockGuild(vety.client);
+        const textChannel = createMockTextChannel(vety.client, guild.id);
+        const author = createMockUser(vety.client);
+        vety.client.ws.emit("GUILD_CREATE", guild);
       });
     });
   });

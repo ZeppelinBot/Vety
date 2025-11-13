@@ -56,10 +56,10 @@ removed (`"manual"`, `"deleted"`, or `"replaced"`).
 
 ### `pluginData.messageCommands.removeByTrigger(trigger)`
 Removes the first command matching the provided trigger string and returns a boolean indicating whether anything was
-removed. This is what Knub uses under the hood for `deletedMessageCommands`.
+removed. This is what Vety uses under the hood for `deletedMessageCommands`.
 
 You can still call `pluginData.messageCommands.runFromMessage(message)` manually, but in most cases you should prefer the
-global [`knub.dispatchMessageCommands`](../plugins/message-commands.md#manual-command-dispatch) helper to make sure all
+global [`vety.dispatchMessageCommands`](../plugins/message-commands.md#manual-command-dispatch) helper to make sure all
 plugins – guild and global – receive the message consistently.
 
 ## Custom state
@@ -68,7 +68,7 @@ One point mentioned above was **custom internal state**. In many cases, you want
 This state can be accessed via `pluginData.state` and you can use a `PluginType` type to specify its type:
 
 ```ts
-import { BasePluginType, guildPluginSlashCommand, guildPlugin } from "knub";
+import { BasePluginType, guildPluginSlashCommand, guildPlugin } from "vety";
 
 interface MyPluginType extends BasePluginType {
   state: {

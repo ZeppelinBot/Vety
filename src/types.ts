@@ -16,7 +16,7 @@ export type GlobalPluginMap = Map<string, AnyGlobalPluginBlueprint>;
 
 export type LogFn = (level, ...args) => void;
 
-export interface KnubOptions {
+export interface VetyOptions {
   /**
    * If enabled, plugin slash commands are automatically registered with Discord on bot start-up.
    * Defaults to `true`.
@@ -32,10 +32,10 @@ export interface KnubOptions {
   [key: string]: any;
 }
 
-export interface KnubArgs {
+export interface VetyArgs {
   guildPlugins: Array<AnyGuildPluginBlueprint>;
   globalPlugins: Array<AnyGlobalPluginBlueprint>;
-  options: Partial<KnubOptions>;
+  options: Partial<VetyOptions>;
 }
 
 export interface LoadedGuildPlugin<TPluginType extends BasePluginType> {
