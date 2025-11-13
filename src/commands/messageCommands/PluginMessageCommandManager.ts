@@ -239,16 +239,6 @@ export class PluginMessageCommandManager<TPluginData extends AnyPluginData<any>>
     }
   }
 
-  private findCommandByBlueprint(
-    blueprint: MessageCommandBlueprint<TPluginData, any>,
-  ): PluginCommandDefinition | undefined {
-    return this.manager
-      .getAll()
-      .find((cmd) =>
-        triggersEqual(getBlueprintTriggers(cmd.config!.extra?.blueprint), getBlueprintTriggers(blueprint)),
-      );
-  }
-
   private findCommandByTrigger(trigger: string): PluginCommandDefinition | undefined {
     return this.manager.getAll().find((cmd) => getBlueprintTriggers(cmd.config!.extra?.blueprint).includes(trigger));
   }
@@ -281,12 +271,4 @@ function getBlueprintTriggers(blueprint?: MessageCommandBlueprint<any, any>): st
   }
 
   return Array.isArray(blueprint.trigger) ? blueprint.trigger : [blueprint.trigger];
-}
-
-function triggersEqual(first: string[], second: string[]): boolean {
-  if (first.length !== second.length) {
-    return false;
-  }
-
-  return first.every((trigger, index) => second[index] === trigger);
 }
