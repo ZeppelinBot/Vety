@@ -52,14 +52,8 @@ describe("PluginMessageCommandManager", () => {
     manager.add(blueprint as any);
     expect(addedTriggers).to.deep.equal(["foo", "foo"]);
 
-    // Re-adding should replace the previous command
-    manager.add(blueprint as any);
-    expect(removedEvents).to.have.length(2);
-    expect(removedEvents[1]!.reason).to.equal("replaced");
-    expect(addedTriggers).to.deep.equal(["foo", "foo", "foo"]);
-
     manager.removeByTrigger("foo");
-    expect(removedEvents).to.have.length(3);
-    expect(removedEvents[2]!.reason).to.equal("manual");
+    expect(removedEvents).to.have.length(2);
+    expect(removedEvents[1]!.reason).to.equal("manual");
   });
 });

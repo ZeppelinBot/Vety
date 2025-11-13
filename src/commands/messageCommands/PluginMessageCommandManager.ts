@@ -54,11 +54,6 @@ export class PluginMessageCommandManager<TPluginData extends AnyPluginData<any>>
   public add<TSignature extends MessageCommandSignatureOrArray<TPluginData["_pluginType"]>>(
     blueprint: MessageCommandBlueprint<TPluginData, TSignature>,
   ): void {
-    const existingCommand = this.findCommandByBlueprint(blueprint);
-    if (existingCommand) {
-      this.remove(existingCommand.id, "replaced");
-    }
-
     const preFilters = Array.from(blueprint.config?.preFilters ?? []);
     preFilters.unshift(restrictCommandSource, checkCommandPermission);
 
