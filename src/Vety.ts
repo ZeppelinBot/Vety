@@ -168,7 +168,7 @@ export class Vety extends EventEmitter {
       this.log("info", "Bot connected!");
     });
 
-    this.client.once("ready", async () => {
+    this.client.once("clientReady", async () => {
       this.log("info", "Received READY");
 
       const autoRegisterApplicationCommands = this.options.autoRegisterApplicationCommands ?? true;

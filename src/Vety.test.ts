@@ -93,7 +93,7 @@ describe("Vety", () => {
       const guild = createMockGuild(vety.client);
       vety.client.ws.emit("GUILD_CREATE", guild);
       await sleep(30);
-      vety.client.emit("ready", vety.client as Client<true>);
+      vety.client.emit("clientReady", vety.client as Client<true>);
       await sleep(30);
       assert(loadedTimes === 1);
 

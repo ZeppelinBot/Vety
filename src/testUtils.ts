@@ -137,7 +137,7 @@ export async function initializeVety(vety: Vety): Promise<void> {
     vety.initialize();
     vety.client.emit("connect");
     vety.client.emit("shardReady", 0, undefined);
-    vety.client.emit("ready", vety.client as Client<true>);
+    vety.client.emit("clientReady", vety.client as Client<true>);
   });
 }
 

@@ -175,7 +175,7 @@ export const globalEvents = [
   "guildCreate",
   "guildUnavailable",
   "error",
-  "ready",
+  "clientReady",
   "invalidated",
   "userUpdate",
   "warn",
