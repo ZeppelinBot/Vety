@@ -6,5 +6,12 @@
 
   "service": "devenv",
   "remoteUser": "dev",
-  "workspaceFolder": "/workspace/vety"
+  "workspaceFolder": "/workspace/vety",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "EditorConfig.EditorConfig"
+      ]
+    }
+  }
 }
