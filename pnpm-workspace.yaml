@@ -1,0 +1,6 @@
+storeDir: .pnpm-store
+verifyDepsBeforeRun: false
+
+minimumReleaseAge: 20160 # in minutes (2 weeks)
+minimumReleaseAgeExclude:
+  - 'knub-command-manager'
