@@ -8,11 +8,11 @@
   "scripts": {
     "test": "npm run build-debug && mocha dist --recursive -r dist/testHooks.js --trace-uncaught",
     "test-debug": "npm run build-debug && why-is-node-running ./node_modules/.bin/mocha dist --recursive",
-    "build-debug": "shx rm -rf dist && shx rm -f tsconfig.tsbuildinfo && tsc --sourceMap true",
-    "build": "shx rm -rf dist && shx rm -f tsconfig.tsbuildinfo && tsc --sourceMap false && shx cp .npmignore dist/",
+    "build-debug": "rm -rf dist && rm -f tsconfig.tsbuildinfo && tsc --sourceMap true",
+    "build": "rm -rf dist && rm -f tsconfig.tsbuildinfo && tsc --sourceMap false && cp .npmignore dist/",
     "preversion": "npm run test && npm run biome-check",
     "prepublishOnly": "npm run test && npm run build",
-    "watch": "shx touch dist && shx rm -r dist && tsc --watch",
+    "watch": "touch dist && rm -r dist && tsc --watch",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint",
@@ -45,7 +45,6 @@
     "mocha": "^11.4.0",
     "oxfmt": "^0.61.0",
     "oxlint": "^1.76.0",
-    "shx": "^0.4.0",
     "typescript": "^7.0.2",
     "why-is-node-running": "^3.2.2"
   },
