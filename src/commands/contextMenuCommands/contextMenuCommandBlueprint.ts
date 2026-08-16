@@ -18,8 +18,9 @@ export interface BaseContextMenuCommandBlueprint {
 
 // MESSAGE CONTEXT MENU COMMANDS
 
-export interface MessageContextMenuCommandBlueprint<TPluginData extends AnyPluginData<any>>
-  extends BaseContextMenuCommandBlueprint {
+export interface MessageContextMenuCommandBlueprint<
+  TPluginData extends AnyPluginData<any>,
+> extends BaseContextMenuCommandBlueprint {
   type: "message-context-menu";
   run: (meta: MessageContextMenuCommandMeta<TPluginData>) => void | Promise<void>;
 }
@@ -71,8 +72,9 @@ export function globalPluginMessageContextMenuCommand(...args: unknown[]): unkno
 
 // USER CONTEXT MENU COMMANDS
 
-export interface UserContextMenuCommandBlueprint<TPluginData extends AnyPluginData<any>>
-  extends BaseContextMenuCommandBlueprint {
+export interface UserContextMenuCommandBlueprint<
+  TPluginData extends AnyPluginData<any>,
+> extends BaseContextMenuCommandBlueprint {
   type: "user-context-menu";
   run: (meta: UserContextMenuCommandMeta<TPluginData>) => void | Promise<void>;
 }

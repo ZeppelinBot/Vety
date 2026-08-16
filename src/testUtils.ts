@@ -294,5 +294,5 @@ export type AssertTypeEquals<TActual, TExpected> = TActual extends TExpected ? t
 export function assertTypeEquals<
   TExpected,
   TActual,
-  _TAssert extends TActual extends TExpected ? true : false,
+  _TAssert extends (TActual extends TExpected ? true : false),
 >(): void {}

@@ -55,11 +55,8 @@ export function isGlobalBlueprintByContext(
   return true;
 }
 
-export type PluginPublicInterface<T extends BasePluginBlueprint<any, any>> = NonNullable<T["public"]> extends (
-  ...args: any[]
-) => infer R
-  ? R
-  : null;
+export type PluginPublicInterface<T extends BasePluginBlueprint<any, any>> =
+  NonNullable<T["public"]> extends (...args: any[]) => infer R ? R : null;
 
 /**
  * By default, return an empty config for all guilds and the global config

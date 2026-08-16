@@ -252,8 +252,9 @@ export interface CommandLifecycleEvent<TPluginData extends AnyPluginData<any>> {
   pluginData: TPluginData;
 }
 
-export interface CommandRemovedEvent<TPluginData extends AnyPluginData<any>>
-  extends CommandLifecycleEvent<TPluginData> {
+export interface CommandRemovedEvent<
+  TPluginData extends AnyPluginData<any>,
+> extends CommandLifecycleEvent<TPluginData> {
   reason: CommandRemovalReason;
 }
 

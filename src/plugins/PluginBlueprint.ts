@@ -100,8 +100,10 @@ export interface BasePluginBlueprint<TPluginData extends AnyPluginData<any>, TPu
 /**
  * Blueprint for a plugin that can only be loaded in a guild context
  */
-export interface GuildPluginBlueprint<TPluginData extends GuildPluginData<any>, TPublicInterface>
-  extends BasePluginBlueprint<TPluginData, TPublicInterface> {
+export interface GuildPluginBlueprint<
+  TPluginData extends GuildPluginData<any>,
+  TPublicInterface,
+> extends BasePluginBlueprint<TPluginData, TPublicInterface> {
   /**
    * Function that returns other plugins that are required for this plugin to function.
    * They will be loaded before this plugin.
@@ -132,8 +134,10 @@ export type AnyGuildEventListenerBlueprint<TPluginData extends GuildPluginData<a
 /**
  * Blueprint for a plugin that can only be loaded in a global context
  */
-export interface GlobalPluginBlueprint<TPluginData extends GlobalPluginData<any>, TPublicInterface>
-  extends BasePluginBlueprint<TPluginData, TPublicInterface> {
+export interface GlobalPluginBlueprint<
+  TPluginData extends GlobalPluginData<any>,
+  TPublicInterface,
+> extends BasePluginBlueprint<TPluginData, TPublicInterface> {
   /**
    * Function that returns other plugins that are required for this plugin to function.
    * They will be loaded before this plugin.

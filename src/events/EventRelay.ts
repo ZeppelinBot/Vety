@@ -27,12 +27,9 @@ export class EventRelay {
   protected anyListeners: AnyListenerMap = new Map() as AnyListenerMap;
   protected registeredRelays: Set<ValidEvent> = new Set();
   protected client: Client;
-  protected profiler: Profiler
+  protected profiler: Profiler;
 
-  constructor(
-    client: Client,
-    profiler: Profiler,
-  ) {
+  constructor(client: Client, profiler: Profiler) {
     this.client = client;
     this.profiler = profiler;
   }

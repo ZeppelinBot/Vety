@@ -43,7 +43,12 @@ export type {
 
 export { helpers };
 
-export { parseSignature, type TTypeHelperOpts, type TTypeHelperResult, TypeConversionError } from "knub-command-manager";
+export {
+  parseSignature,
+  type TTypeHelperOpts,
+  type TTypeHelperResult,
+  TypeConversionError,
+} from "knub-command-manager";
 export {
   type CommandLifecycleEvent,
   type CommandLifecycleListener,

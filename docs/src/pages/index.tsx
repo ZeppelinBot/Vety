@@ -14,7 +14,8 @@ export default function IndexPage() {
         <main>
           <h1>Vety</h1>
           <p>
-            Vety is a modern TypeScript framework for creating Discord bots, with a focus on great developer experience and safe defaults.
+            Vety is a modern TypeScript framework for creating Discord bots, with a focus on great developer experience
+            and safe defaults.
           </p>
           <p>
             <a href="/docs/31">Go to documentation</a>

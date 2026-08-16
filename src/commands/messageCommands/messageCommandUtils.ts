@@ -33,9 +33,10 @@ export function getDefaultMessageCommandPrefix(client: Client): RegExp {
   return new RegExp(`<@!?${client.user!.id}> `);
 }
 
-export type ContextualCommandMessage<TPluginData extends AnyPluginData<any>> = TPluginData extends GuildPluginData<any>
-  ? OmitPartialGroupDMChannel<Message<true>>
-  : OmitPartialGroupDMChannel<Message>;
+export type ContextualCommandMessage<TPluginData extends AnyPluginData<any>> =
+  TPluginData extends GuildPluginData<any>
+    ? OmitPartialGroupDMChannel<Message<true>>
+    : OmitPartialGroupDMChannel<Message>;
 
 export interface MessageCommandMeta<TPluginData extends AnyPluginData<any>, TArguments> {
   args: TArguments;
