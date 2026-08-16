@@ -1,4 +1,10 @@
 {
-	"name": "Vety development environment",
-	"image": "mcr.microsoft.com/devcontainers/javascript-node:24"
+  "name": "Vety devenv",
+
+  "dockerComposeFile": "../docker/devenv/compose.yml",
+  "initializeCommand": "docker compose -f ./docker/devenv/compose.yml up -d --wait",
+
+  "service": "devenv",
+  "remoteUser": "dev",
+  "workspaceFolder": "/workspace/vety"
 }

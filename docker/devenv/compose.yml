@@ -1,0 +1,28 @@
+name: vety-dev
+
+volumes:
+  home: {}
+  untrusted-home: {}
+
+services:
+  devenv:
+    build: &devenv-build
+      context: .
+    init: true
+    volumes:
+      - home:/home/dev
+      - ../../:/workspace/vety
+    healthcheck:
+      test: ["CMD", "test", "-e", "/run/uid-ready"]
+      interval: 30s
+      start_period: 30s
+      start_interval: 200ms
+
+  # Utility container to run untrusted applications
+  # without sharing the main devenv's container and home dir
+  untrusted:
+    profiles: [manual]
+    build: *devenv-build
+    volumes:
+      - untrusted-home:/home/dev
+      - ../../:/workspace/vety
