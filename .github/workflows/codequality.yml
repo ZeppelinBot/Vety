@@ -12,4 +12,5 @@ jobs:
       with:
         cache: true
     - run: |
-        pnpm run biome-check
+        pnpm run lint
+        pnpm run format:check

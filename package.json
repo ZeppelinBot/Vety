@@ -13,8 +13,10 @@
     "preversion": "npm run test && npm run biome-check",
     "prepublishOnly": "npm run test && npm run build",
     "watch": "shx touch dist && shx rm -r dist && tsc --watch",
-    "biome-check": "biome check ./src",
-    "biome-fix": "biome check --write ./src"
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix"
   },
   "main": "dist/index.js",
   "exports": {
@@ -36,12 +38,13 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.6",
     "@types/chai": "^5.2.2",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.15.18",
     "chai": "^5.2.0",
     "mocha": "^11.4.0",
+    "oxfmt": "^0.61.0",
+    "oxlint": "^1.76.0",
     "shx": "^0.4.0",
     "typescript": "^7.0.2",
     "why-is-node-running": "^3.2.2"
