@@ -103,7 +103,7 @@ describe("LockManager", () => {
       // 1. Acquire lock
       await lockManager.acquire(lockName);
       // 2. Attempt to acquire the lock again
-      lockManager.acquire(lockName).catch((err) => {
+      lockManager.acquire(lockName).catch(() => {
         done();
       });
       // 3. Destroy the lock manager (and locks) before the second acquire() succeeds

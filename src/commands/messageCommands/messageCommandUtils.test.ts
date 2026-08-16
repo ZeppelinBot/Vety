@@ -29,7 +29,9 @@ describe("messageCommandUtils", () => {
     };
 
     type TArgsFromSignature = ArgsFromSignatureOrArray<typeof signature>;
+    /* oxlint-disable-next-line no-unused-vars */
     const result1: AssertEquals<TArgsFromSignature["foo"], string> = true;
+    /* oxlint-disable-next-line no-unused-vars */
     const result2: AssertEquals<TArgsFromSignature["bar"], number> = true;
 
     // Type-only test
@@ -43,7 +45,9 @@ describe("messageCommandUtils", () => {
     };
 
     type TArgsFromSignature = ArgsFromSignatureOrArray<typeof signature>;
+    /* oxlint-disable-next-line no-unused-vars */
     const result1: AssertEquals<TArgsFromSignature["foo"], string[]> = true;
+    /* oxlint-disable-next-line no-unused-vars */
     const result2: AssertEquals<TArgsFromSignature["bar"], number[]> = true;
 
     // Type-only test

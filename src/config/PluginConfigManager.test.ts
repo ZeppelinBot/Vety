@@ -160,7 +160,7 @@ describe("PluginConfigManager", () => {
 
     try {
       await configManager.init();
-    } catch (err) {
+    } catch {
       return;
     }
 
@@ -555,7 +555,7 @@ describe("PluginConfigManager", () => {
     try {
       await configManager1.init();
       assert.fail("Config manager did not throw on missing override config");
-    } catch (err) {}
+    } catch {}
 
     const configManager2 = new PluginConfigManager<BasePluginData<PluginType>>(
       {
@@ -575,7 +575,7 @@ describe("PluginConfigManager", () => {
     try {
       await configManager2.init();
       assert.fail("Config manager did not throw on unknown criteria key");
-    } catch (err) {}
+    } catch {}
 
     const configManager3 = new PluginConfigManager<BasePluginData<PluginType>>(
       {
@@ -595,7 +595,7 @@ describe("PluginConfigManager", () => {
     try {
       await configManager3.init();
       assert.fail("Config manager did not throw on invalid criteria value type");
-    } catch (err) {}
+    } catch {}
   });
 
   it("reject invalid override config", async () => {
@@ -629,6 +629,6 @@ describe("PluginConfigManager", () => {
     try {
       await configManager.init();
       assert.fail("Config manager did not throw on invalid override config");
-    } catch (err) {}
+    } catch {}
   });
 });

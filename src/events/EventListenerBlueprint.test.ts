@@ -24,6 +24,7 @@ describe("guildPluginEventListener() helper", () => {
       event: "messageCreate",
       listener({ args }) {
         // Test type inference
+        /* oxlint-disable-next-line no-unused-vars */
         const result: AssertEquals<typeof args, { message: GuildMessage }> = true;
       },
     });
@@ -33,6 +34,7 @@ describe("guildPluginEventListener() helper", () => {
       event: "channelUpdate",
       listener({ args }) {
         // Test type inference
+        /* oxlint-disable-next-line no-unused-vars */
         const result: AssertEquals<typeof args, { oldChannel: GuildChannel; newChannel: GuildChannel }> = true;
       },
     });
@@ -41,6 +43,7 @@ describe("guildPluginEventListener() helper", () => {
       event: "typingStart",
       listener({ args }) {
         // Test type inference
+        /* oxlint-disable-next-line no-unused-vars */
         const result: AssertEquals<typeof args.typing.channel, GuildTextBasedChannel> = true;
       },
     });
@@ -81,6 +84,7 @@ describe("globalPluginEventListener() helper", () => {
       event: "messageCreate",
       listener({ args }) {
         // Test type inference
+        /* oxlint-disable-next-line no-unused-vars */
         const result: AssertEquals<typeof args, { message: Message }> = true;
       },
     });
@@ -90,6 +94,7 @@ describe("globalPluginEventListener() helper", () => {
       event: "channelUpdate",
       listener({ args }) {
         // Test type inference
+        /* oxlint-disable-next-line no-unused-vars */
         const result: AssertEquals<typeof args, { oldChannel: Channel; newChannel: Channel }> = true;
       },
     });
@@ -98,6 +103,7 @@ describe("globalPluginEventListener() helper", () => {
       event: "typingStart",
       listener({ args }) {
         // Test type inference
+        /* oxlint-disable-next-line no-unused-vars */
         const result: AssertEquals<typeof args.typing.channel, TextBasedChannel> = true;
       },
     });

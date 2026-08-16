@@ -23,7 +23,9 @@ describe("pluginUtils", () => {
     type Expected = { someFn: 5 };
     type NotExpected = { someFn: "foo" };
 
+    /* oxlint-disable-next-line no-unused-vars */
     const result1: AssertEquals<Expected, PublicInterface> = true;
+    /* oxlint-disable-next-line no-unused-vars */
     const result2: AssertEquals<NotExpected, PublicInterface> = false;
 
     // Type-only test

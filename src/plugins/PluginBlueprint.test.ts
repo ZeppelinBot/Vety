@@ -598,7 +598,6 @@ describe("PluginBlueprint", () => {
 
     it("GuildPlugin beforeUnload()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const beforeUnloadCalled = false;
         const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-unload",
           configSchema: z.strictObject({}),
@@ -1814,9 +1813,11 @@ describe("PluginBlueprint", () => {
         configSchema: z.strictObject({}),
 
         beforeLoad(pluginData) {
+          /* oxlint-disable-next-line no-unused-vars */
           const typeCheck: AssertEquals<typeof pluginData, GuildPluginData<CustomPluginType>> = true;
         },
         afterLoad(pluginData) {
+          /* oxlint-disable-next-line no-unused-vars */
           const typeCheck: AssertEquals<typeof pluginData, GuildPluginData<CustomPluginType>> = true;
         },
       });
@@ -1839,20 +1840,23 @@ describe("PluginBlueprint", () => {
 
         public(pluginData) {
           return {
+            /* oxlint-disable-next-line no-unused-vars */
             myFn(param: "a constant string") {
+              /* oxlint-disable-next-line no-unused-vars */
               const result: AssertEquals<typeof pluginData.state.foo, OtherPluginType["state"]["foo"]> = true;
             },
           };
         },
       });
 
-      const MainPlugin = guildPlugin({
+      guildPlugin({
         name: "main-plugin",
         configSchema: z.strictObject({}),
 
         afterLoad(pluginData) {
           const otherPlugin = pluginData.getPlugin(OtherPlugin);
 
+          /* oxlint-disable-next-line no-unused-vars */
           const result: AssertEquals<Parameters<typeof otherPlugin.myFn>[0], "a constant string"> = true;
         },
       });

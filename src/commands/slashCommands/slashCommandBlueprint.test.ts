@@ -9,7 +9,7 @@ type AssertEquals<TActual, TExpected> = TActual extends TExpected ? true : false
 describe("Slash command blueprints", () => {
   describe("typedGuildSlashCommand()", () => {
     it("(blueprint)", () => {
-      const blueprint = guildPluginSlashCommand({
+      guildPluginSlashCommand({
         name: "cmd",
         description: "Blah blah",
         signature: [
@@ -17,6 +17,7 @@ describe("Slash command blueprints", () => {
           slashOptions.number({ name: "bar", description: "" }),
         ],
         run({ options }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result: AssertEquals<typeof options, { foo: string; bar: number | null }> = true;
         },
       });
@@ -32,7 +33,7 @@ describe("Slash command blueprints", () => {
     }
 
     it("<TPluginType>()(blueprint)", () => {
-      const blueprint = guildPluginSlashCommand<CustomPluginType>()({
+      guildPluginSlashCommand<CustomPluginType>()({
         name: "cmd",
         description: "Blah blah",
         signature: [
@@ -40,7 +41,9 @@ describe("Slash command blueprints", () => {
           slashOptions.number({ name: "bar", description: "" }),
         ],
         run({ pluginData, options }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result1: AssertEquals<typeof options, { foo: string; bar: number | null }> = true;
+          /* oxlint-disable-next-line no-unused-vars */
           const result2: AssertEquals<typeof pluginData.state.foo, 5> = true;
         },
       });

@@ -14,16 +14,18 @@ type AssertEquals<TActual, TExpected> = TActual extends TExpected ? true : false
 describe("Context menu command blueprints", () => {
   describe("MessageContextMenuCommandBlueprint", () => {
     it("(blueprint)", () => {
-      const guildBlueprint = guildPluginMessageContextMenuCommand({
+      guildPluginMessageContextMenuCommand({
         name: "Test command",
         run({ interaction }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result: AssertEquals<typeof interaction, MessageContextMenuCommandInteraction> = true;
         },
       });
 
-      const globalBlueprint = globalPluginMessageContextMenuCommand({
+      globalPluginMessageContextMenuCommand({
         name: "Test command",
         run({ interaction }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result: AssertEquals<typeof interaction, MessageContextMenuCommandInteraction> = true;
         },
       });
@@ -39,18 +41,22 @@ describe("Context menu command blueprints", () => {
     }
 
     it("<TPluginData>()(blueprint)", () => {
-      const guildBlueprint = guildPluginMessageContextMenuCommand<CustomPluginType>()({
+      guildPluginMessageContextMenuCommand<CustomPluginType>()({
         name: "Test command",
         run({ pluginData, interaction }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result1: AssertEquals<typeof interaction, MessageContextMenuCommandInteraction> = true;
+          /* oxlint-disable-next-line no-unused-vars */
           const result2: AssertEquals<typeof pluginData.state.foo, number> = true;
         },
       });
 
-      const globalBlueprint = globalPluginMessageContextMenuCommand<CustomPluginType>()({
+      globalPluginMessageContextMenuCommand<CustomPluginType>()({
         name: "Test command",
         run({ pluginData, interaction }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result1: AssertEquals<typeof interaction, MessageContextMenuCommandInteraction> = true;
+          /* oxlint-disable-next-line no-unused-vars */
           const result2: AssertEquals<typeof pluginData.state.foo, number> = true;
         },
       });
@@ -62,16 +68,18 @@ describe("Context menu command blueprints", () => {
 
   describe("UserContextMenuCommandBlueprint", () => {
     it("(blueprint)", () => {
-      const guildBlueprint = guildPluginUserContextMenuCommand({
+      guildPluginUserContextMenuCommand({
         name: "Test command",
         run({ interaction }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result: AssertEquals<typeof interaction, UserContextMenuCommandInteraction> = true;
         },
       });
 
-      const globalBlueprint = guildPluginUserContextMenuCommand({
+      guildPluginUserContextMenuCommand({
         name: "Test command",
         run({ interaction }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result: AssertEquals<typeof interaction, UserContextMenuCommandInteraction> = true;
         },
       });
@@ -87,18 +95,22 @@ describe("Context menu command blueprints", () => {
     }
 
     it("<TPluginData>()(blueprint)", () => {
-      const guildBlueprint = guildPluginUserContextMenuCommand<CustomPluginType>()({
+      guildPluginUserContextMenuCommand<CustomPluginType>()({
         name: "Test command",
         run({ pluginData, interaction }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result1: AssertEquals<typeof interaction, UserContextMenuCommandInteraction> = true;
+          /* oxlint-disable-next-line no-unused-vars */
           const result2: AssertEquals<typeof pluginData.state.foo, number> = true;
         },
       });
 
-      const globalBlueprint = globalPluginUserContextMenuCommand<CustomPluginType>()({
+      globalPluginUserContextMenuCommand<CustomPluginType>()({
         name: "Test command",
         run({ pluginData, interaction }) {
+          /* oxlint-disable-next-line no-unused-vars */
           const result1: AssertEquals<typeof interaction, UserContextMenuCommandInteraction> = true;
+          /* oxlint-disable-next-line no-unused-vars */
           const result2: AssertEquals<typeof pluginData.state.foo, number> = true;
         },
       });
