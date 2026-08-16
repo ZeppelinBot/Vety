@@ -1,4 +1,5 @@
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import { z } from "zod";
 import type { GuildPluginBlueprint } from "./PluginBlueprint.ts";
 import type { PluginPublicInterface } from "./pluginUtils.ts";
@@ -24,5 +25,8 @@ describe("pluginUtils", () => {
 
     const result1: AssertEquals<Expected, PublicInterface> = true;
     const result2: AssertEquals<NotExpected, PublicInterface> = false;
+
+    // Type-only test
+    assert.ok(true);
   });
 });

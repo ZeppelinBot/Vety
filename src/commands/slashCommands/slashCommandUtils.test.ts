@@ -1,4 +1,5 @@
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import type { AssertTypeEquals } from "../../testUtils.ts";
 import { slashOptions } from "./slashCommandOptions.ts";
 import type { OptionsFromSignature, SlashCommandSignature } from "./slashCommandUtils.ts";
@@ -15,5 +16,8 @@ describe("slashCommandUtils", () => {
 
     const test3: AssertTypeEquals<OptionsFromSignature<typeof signature>["optional_str"], string> = true;
     const test4: AssertTypeEquals<OptionsFromSignature<typeof signature>["optional_str"], null> = true;
+
+    // Type-only test
+    assert.ok(true);
   });
 });

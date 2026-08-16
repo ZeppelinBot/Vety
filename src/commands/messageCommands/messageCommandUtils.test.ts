@@ -1,6 +1,6 @@
-import { assert } from "chai";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import { CommandManager, isError, number, string } from "knub-command-manager";
-import { describe, it } from "mocha";
 import {
   type ArgsFromSignatureOrArray,
   type CommandContext,
@@ -31,6 +31,9 @@ describe("messageCommandUtils", () => {
     type TArgsFromSignature = ArgsFromSignatureOrArray<typeof signature>;
     const result1: AssertEquals<TArgsFromSignature["foo"], string> = true;
     const result2: AssertEquals<TArgsFromSignature["bar"], number> = true;
+
+    // Type-only test
+    assert.ok(true);
   });
 
   it("ArgsFromSignature rest parameters", () => {
@@ -42,5 +45,8 @@ describe("messageCommandUtils", () => {
     type TArgsFromSignature = ArgsFromSignatureOrArray<typeof signature>;
     const result1: AssertEquals<TArgsFromSignature["foo"], string[]> = true;
     const result2: AssertEquals<TArgsFromSignature["bar"], number[]> = true;
+
+    // Type-only test
+    assert.ok(true);
   });
 });

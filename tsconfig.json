@@ -17,7 +17,9 @@
     "skipLibCheck": true,
     "composite": true,
     "alwaysStrict": true,
-    "rewriteRelativeImportExtensions": true
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true
   },
   "include": [
     "src/**/*"

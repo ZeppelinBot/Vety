@@ -1,5 +1,5 @@
-import { assert } from "chai";
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import { sleep } from "../testUtils.ts";
 import { CooldownManager } from "./CooldownManager.ts";
 

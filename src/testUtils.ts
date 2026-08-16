@@ -101,7 +101,7 @@ export function createMockClient(): Client<true> {
  * Helper function to set up Vety with auto-cleanup
  */
 export async function withVety(
-  mochaDoneFn: () => void,
+  testDoneFn: () => void,
   fn: (createVety: (args: Partial<VetyArgs>) => Vety, done: () => void) => void | Promise<void>,
 ): Promise<void> {
   let vety: Vety | null = null;
@@ -115,7 +115,7 @@ export async function withVety(
       throw new Error("createVety() was not called in withVety()");
     }
     void vety.destroy();
-    mochaDoneFn();
+    testDoneFn();
   };
   try {
     await fn(createVety, done);

@@ -1,5 +1,5 @@
-import { expect } from "chai";
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import { z } from "zod";
 import type { PluginOptions } from "../index.ts";
 import type { GuildPluginData } from "../plugins/PluginData.ts";
@@ -35,28 +35,28 @@ describe("configUtils", () => {
     const result: any = mergeConfig<any>(base, override);
 
     it("should overwrite scalar values", () => {
-      expect(result.foo).to.equal(2);
+      assert.strictEqual(result.foo, 2);
     });
 
     it("should overwrite nested scalar values", () => {
-      expect(result.bar.baz).to.equal(5);
+      assert.strictEqual(result.bar.baz, 5);
     });
 
     it("should merge objects instead of overwriting them", () => {
-      expect(result.bar.qux).to.equal(3);
-      expect(result.bar.quux).to.equal(10);
+      assert.strictEqual(result.bar.qux, 3);
+      assert.strictEqual(result.bar.quux, 10);
     });
 
     it("should overwrite arrays", () => {
-      expect(result.simpleArr).to.eql(["a", "b"]);
+      assert.deepStrictEqual(result.simpleArr, ["a", "b"]);
     });
 
     it("should not support adding to arrays anymore", () => {
-      expect(result.addArr).to.eql([1, 2]);
+      assert.deepStrictEqual(result.addArr, [1, 2]);
     });
 
     it("should not support removing from arrays anymore", () => {
-      expect(result.addArr).to.eql([1, 2]);
+      assert.deepStrictEqual(result.addArr, [1, 2]);
     });
   });
 
@@ -131,8 +131,8 @@ describe("configUtils", () => {
         pluginOptions: sharedPluginOptions,
         matchParams: {},
       });
-      expect(matchedConfig.value).to.equal(5);
-      expect(matchedConfig.hasAccess).to.equal(false);
+      assert.strictEqual(matchedConfig.value, 5);
+      assert.strictEqual(matchedConfig.hasAccess, false);
     });
 
     it("should match levels", async () => {
@@ -144,7 +144,7 @@ describe("configUtils", () => {
           level: 60,
         },
       });
-      expect(matchedConfig.hasAccess).to.equal(true);
+      assert.strictEqual(matchedConfig.hasAccess, true);
     });
 
     it("should require all level conditions to apply", async () => {
@@ -156,7 +156,7 @@ describe("configUtils", () => {
           level: 35,
         },
       });
-      expect(matchedConfig.hasAccess).to.equal(false);
+      assert.strictEqual(matchedConfig.hasAccess, false);
     });
 
     it("should match channels and accept any specified channel", async () => {
@@ -176,8 +176,8 @@ describe("configUtils", () => {
           channelId: "1200",
         },
       });
-      expect(matchedConfig1.value).to.equal(10);
-      expect(matchedConfig2.value).to.equal(10);
+      assert.strictEqual(matchedConfig1.value, 10);
+      assert.strictEqual(matchedConfig2.value, 10);
     });
 
     it("should match categories and accept any specified category", async () => {
@@ -197,8 +197,8 @@ describe("configUtils", () => {
           categoryId: "9200",
         },
       });
-      expect(matchedConfig1.value).to.equal(120);
-      expect(matchedConfig2.value).to.equal(120);
+      assert.strictEqual(matchedConfig1.value, 120);
+      assert.strictEqual(matchedConfig2.value, 120);
     });
 
     it("should match users", async () => {
@@ -210,7 +210,7 @@ describe("configUtils", () => {
           userId: "2100",
         },
       });
-      expect(matchedConfig.value).to.equal(15);
+      assert.strictEqual(matchedConfig.value, 15);
     });
 
     it("should match roles", async () => {
@@ -230,8 +230,8 @@ describe("configUtils", () => {
           memberRoles: ["3100", "3200"],
         },
       });
-      expect(matchedConfig1.value).to.equal(5); // has 3100 but no 3200 -> no match
-      expect(matchedConfig2.value).to.equal(20); // has 3100 and 3200 -> match
+      assert.strictEqual(matchedConfig1.value, 5); // has 3100 but no 3200 -> no match
+      assert.strictEqual(matchedConfig2.value, 20); // has 3100 and 3200 -> match
     });
 
     it("custom override criteria", async () => {
@@ -332,10 +332,10 @@ describe("configUtils", () => {
         customOverrideCriteriaFunctions,
       });
 
-      expect(matchedConfig1.value).to.equal(10);
-      expect(matchedConfig2.value).to.equal(20);
-      expect(matchedConfig3.value).to.equal(5);
-      expect(matchedConfig4.value).to.equal(30);
+      assert.strictEqual(matchedConfig1.value, 10);
+      assert.strictEqual(matchedConfig2.value, 20);
+      assert.strictEqual(matchedConfig3.value, 5);
+      assert.strictEqual(matchedConfig4.value, 30);
     });
 
     it("custom async override criteria", async () => {
@@ -398,8 +398,8 @@ describe("configUtils", () => {
         customOverrideCriteriaFunctions,
       });
 
-      expect(matchedConfig1.value).to.equal(10); // Matched
-      expect(matchedConfig2.value).to.equal(5); // No match
+      assert.strictEqual(matchedConfig1.value, 10); // Matched
+      assert.strictEqual(matchedConfig2.value, 5); // No match
     });
 
     it("false when no conditions are present", async () => {
@@ -422,7 +422,7 @@ describe("configUtils", () => {
         pluginOptions: pluginOpts,
         matchParams: {},
       });
-      expect(matchedConfig.value).to.equal(5);
+      assert.strictEqual(matchedConfig.value, 5);
     });
 
     it("false when an empty 'all' condition is present", async () => {
@@ -449,7 +449,7 @@ describe("configUtils", () => {
           userId: "500",
         },
       });
-      expect(matchedConfig.value).to.equal(5);
+      assert.strictEqual(matchedConfig.value, 5);
     });
 
     it("false when an empty 'any' condition is present", async () => {
@@ -476,7 +476,7 @@ describe("configUtils", () => {
           userId: "500",
         },
       });
-      expect(matchedConfig.value).to.equal(5);
+      assert.strictEqual(matchedConfig.value, 5);
     });
 
     it("errors when an unknown condition is present", async () => {
@@ -504,7 +504,7 @@ describe("configUtils", () => {
             userId: "500",
           },
         });
-        expect.fail("No error was thrown");
+        assert.fail("No error was thrown");
       } catch {}
     });
 
@@ -557,9 +557,9 @@ describe("configUtils", () => {
         },
       });
 
-      expect(matchedConfig1.value).to.equal(10);
-      expect(matchedConfig2.value).to.equal(5);
-      expect(matchedConfig3.value).to.equal(5);
+      assert.strictEqual(matchedConfig1.value, 10);
+      assert.strictEqual(matchedConfig2.value, 5);
+      assert.strictEqual(matchedConfig3.value, 5);
     });
 
     it("'any' special criterion", async () => {
@@ -607,9 +607,9 @@ describe("configUtils", () => {
         },
       });
 
-      expect(matchedConfig1.value).to.equal(10);
-      expect(matchedConfig2.value).to.equal(10);
-      expect(matchedConfig3.value).to.equal(5);
+      assert.strictEqual(matchedConfig1.value, 10);
+      assert.strictEqual(matchedConfig2.value, 10);
+      assert.strictEqual(matchedConfig3.value, 5);
     });
 
     it("'not' special criterion", async () => {
@@ -684,8 +684,8 @@ describe("configUtils", () => {
         },
       });
 
-      expect(matchedConfig1.value).to.equal(5);
-      expect(matchedConfig2.value).to.equal(10);
+      assert.strictEqual(matchedConfig1.value, 5);
+      assert.strictEqual(matchedConfig2.value, 10);
 
       const matchedConfig3 = await getMatchingPluginConfig<SharedPluginType, GuildPluginData<SharedPluginType>>({
         configSchema: sharedConfigSchema,
@@ -706,8 +706,8 @@ describe("configUtils", () => {
         },
       });
 
-      expect(matchedConfig3.value).to.equal(5);
-      expect(matchedConfig4.value).to.equal(20);
+      assert.strictEqual(matchedConfig3.value, 5);
+      assert.strictEqual(matchedConfig4.value, 20);
 
       const matchedConfig5 = await getMatchingPluginConfig<SharedPluginType, GuildPluginData<SharedPluginType>>({
         configSchema: sharedConfigSchema,
@@ -734,9 +734,9 @@ describe("configUtils", () => {
         },
       });
 
-      expect(matchedConfig5.value).to.equal(5);
-      expect(matchedConfig6.value).to.equal(30);
-      expect(matchedConfig7.value).to.equal(30);
+      assert.strictEqual(matchedConfig5.value, 5);
+      assert.strictEqual(matchedConfig6.value, 30);
+      assert.strictEqual(matchedConfig7.value, 30);
     });
 
     it("level matching against 0 works", async () => {
@@ -760,7 +760,7 @@ describe("configUtils", () => {
         pluginOptions: pluginOpts,
         matchParams: { level: 0 },
       });
-      expect(matchedConfig.value).to.equal(20);
+      assert.strictEqual(matchedConfig.value, 20);
     });
 
     it("complex nested overrides work", async () => {
@@ -806,7 +806,7 @@ describe("configUtils", () => {
         pluginOptions: pluginOpts,
         matchParams: {},
       });
-      expect(matchedConfig1.value).to.equal(5);
+      assert.strictEqual(matchedConfig1.value, 5);
 
       // Excluded role "789" included, fail
       const matchedConfig2 = await getMatchingPluginConfig({
@@ -818,7 +818,7 @@ describe("configUtils", () => {
           memberRoles: ["456", "789"],
         },
       });
-      expect(matchedConfig2.value).to.equal(5);
+      assert.strictEqual(matchedConfig2.value, 5);
 
       // Excluded role "789" not included, pass
       const matchedConfig3 = await getMatchingPluginConfig({
@@ -830,7 +830,7 @@ describe("configUtils", () => {
           memberRoles: ["456"],
         },
       });
-      expect(matchedConfig3.value).to.equal(20);
+      assert.strictEqual(matchedConfig3.value, 20);
 
       // Required role "456" not included, fail
       const matchedConfig4 = await getMatchingPluginConfig({
@@ -842,7 +842,7 @@ describe("configUtils", () => {
           memberRoles: [],
         },
       });
-      expect(matchedConfig4.value).to.equal(5);
+      assert.strictEqual(matchedConfig4.value, 5);
 
       // Alternative condition, pass
       const matchedConfig5 = await getMatchingPluginConfig({
@@ -854,7 +854,7 @@ describe("configUtils", () => {
           memberRoles: ["222"],
         },
       });
-      expect(matchedConfig5.value).to.equal(20);
+      assert.strictEqual(matchedConfig5.value, 20);
 
       // Alternative condition with excluded role of first condition, pass
       const matchedConfig6 = await getMatchingPluginConfig({
@@ -866,7 +866,7 @@ describe("configUtils", () => {
           memberRoles: ["222", "789"],
         },
       });
-      expect(matchedConfig6.value).to.equal(20);
+      assert.strictEqual(matchedConfig6.value, 20);
     });
   });
 });

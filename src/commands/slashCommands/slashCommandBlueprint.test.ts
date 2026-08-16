@@ -1,4 +1,5 @@
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import type { BasePluginType } from "../../plugins/pluginTypes.ts";
 import { guildPluginSlashCommand } from "./slashCommandBlueprint.ts";
 import { slashOptions } from "./slashCommandOptions.ts";
@@ -19,6 +20,9 @@ describe("Slash command blueprints", () => {
           const result: AssertEquals<typeof options, { foo: string; bar: number | null }> = true;
         },
       });
+
+      // Type-only test
+      assert.ok(true);
     });
 
     interface CustomPluginType extends BasePluginType {
@@ -40,6 +44,9 @@ describe("Slash command blueprints", () => {
           const result2: AssertEquals<typeof pluginData.state.foo, 5> = true;
         },
       });
+
+      // Type-only test
+      assert.ok(true);
     });
   });
 });

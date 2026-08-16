@@ -1,5 +1,6 @@
 import type { MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction } from "discord.js";
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import type { BasePluginType } from "../../plugins/pluginTypes.ts";
 import {
   globalPluginMessageContextMenuCommand,
@@ -26,6 +27,9 @@ describe("Context menu command blueprints", () => {
           const result: AssertEquals<typeof interaction, MessageContextMenuCommandInteraction> = true;
         },
       });
+
+      // Type-only test
+      assert.ok(true);
     });
 
     interface CustomPluginType extends BasePluginType {
@@ -50,6 +54,9 @@ describe("Context menu command blueprints", () => {
           const result2: AssertEquals<typeof pluginData.state.foo, number> = true;
         },
       });
+
+      // Type-only test
+      assert.ok(true);
     });
   });
 
@@ -68,6 +75,9 @@ describe("Context menu command blueprints", () => {
           const result: AssertEquals<typeof interaction, UserContextMenuCommandInteraction> = true;
         },
       });
+
+      // Type-only test
+      assert.ok(true);
     });
 
     interface CustomPluginType extends BasePluginType {
@@ -92,6 +102,9 @@ describe("Context menu command blueprints", () => {
           const result2: AssertEquals<typeof pluginData.state.foo, number> = true;
         },
       });
+
+      // Type-only test
+      assert.ok(true);
     });
   });
 });

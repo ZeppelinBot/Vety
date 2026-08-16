@@ -1,7 +1,7 @@
-import { expect } from "chai";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import type { DMChannel, TextChannel } from "discord.js";
 import { number, string } from "knub-command-manager";
-import { describe, it } from "mocha";
 import type { BasePluginType } from "../../index.ts";
 import { globalPluginMessageCommand, guildPluginMessageCommand } from "./messageCommandBlueprint.ts";
 
@@ -22,9 +22,9 @@ describe("guildPluginMessageCommand() helper", () => {
       },
     });
 
-    expect(blueprint.trigger).to.equal("cmd");
-    expect(blueprint.signature).to.eql({ foo: string(), bar: number() });
-    expect(blueprint.run).to.not.equal(undefined);
+    assert.strictEqual(blueprint.trigger, "cmd");
+    assert.deepStrictEqual(blueprint.signature, { foo: string(), bar: number() });
+    assert.notStrictEqual(blueprint.run, undefined);
   });
 
   interface CustomPluginType extends BasePluginType {
@@ -48,9 +48,9 @@ describe("guildPluginMessageCommand() helper", () => {
       },
     });
 
-    expect(blueprint.trigger).to.equal("cmd");
-    expect(blueprint.signature).to.eql({ foo: string(), bar: number() });
-    expect(blueprint.run).to.not.equal(undefined);
+    assert.strictEqual(blueprint.trigger, "cmd");
+    assert.deepStrictEqual(blueprint.signature, { foo: string(), bar: number() });
+    assert.notStrictEqual(blueprint.run, undefined);
   });
 
   it("command message is a guild message", () => {
@@ -111,9 +111,9 @@ describe("globalPluginMessageCommand() helper", () => {
       },
     });
 
-    expect(blueprint.trigger).to.equal("cmd");
-    expect(blueprint.signature).to.eql({ foo: string(), bar: number() });
-    expect(blueprint.run).to.not.equal(undefined);
+    assert.strictEqual(blueprint.trigger, "cmd");
+    assert.deepStrictEqual(blueprint.signature, { foo: string(), bar: number() });
+    assert.notStrictEqual(blueprint.run, undefined);
   });
 
   interface CustomPluginType extends BasePluginType {
@@ -137,9 +137,9 @@ describe("globalPluginMessageCommand() helper", () => {
       },
     });
 
-    expect(blueprint.trigger).to.equal("cmd");
-    expect(blueprint.signature).to.eql({ foo: string(), bar: number() });
-    expect(blueprint.run).to.not.equal(undefined);
+    assert.strictEqual(blueprint.trigger, "cmd");
+    assert.deepStrictEqual(blueprint.signature, { foo: string(), bar: number() });
+    assert.notStrictEqual(blueprint.run, undefined);
   });
 
   it("command message is NOT necessarily a guild message", () => {
@@ -160,5 +160,8 @@ describe("globalPluginMessageCommand() helper", () => {
           : false = true;
       },
     });
+
+    // Type-only test
+    assert.ok(true);
   });
 });

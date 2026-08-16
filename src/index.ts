@@ -21,17 +21,17 @@ export * from "./commands/slashCommands/slashCommandOptions.ts";
 export * from "./commands/slashCommands/slashGroupBlueprint.ts";
 
 export {
-  BaseConfig,
+  type BaseConfig,
   basePluginOverrideCriteriaSchema,
-  PermissionLevels,
-  PluginOptions,
-  PluginOverride,
-  PluginOverrideCriteria,
+  type PermissionLevels,
+  type PluginOptions,
+  type PluginOverride,
+  type PluginOverrideCriteria,
   pluginOverrideCriteriaSchema,
 } from "./config/configTypes.ts";
 export * from "./plugins/PluginData.ts";
-export { BasePluginType } from "./plugins/pluginTypes.ts";
-export {
+export type { BasePluginType } from "./plugins/pluginTypes.ts";
+export type {
   AnyContext,
   GlobalContext,
   GuildContext,
@@ -43,7 +43,7 @@ export {
 
 export { helpers };
 
-export { parseSignature, TTypeHelperOpts, TTypeHelperResult, TypeConversionError } from "knub-command-manager";
+export { parseSignature, type TTypeHelperOpts, type TTypeHelperResult, TypeConversionError } from "knub-command-manager";
 export {
   type CommandLifecycleEvent,
   type CommandLifecycleListener,
@@ -52,7 +52,7 @@ export {
   type CommandRemovedListener,
   PluginMessageCommandManager,
 } from "./commands/messageCommands/PluginMessageCommandManager.ts";
-export { ExtendedMatchParams, PluginConfigManager } from "./config/PluginConfigManager.ts";
+export { type ExtendedMatchParams, PluginConfigManager } from "./config/PluginConfigManager.ts";
 export { CooldownManager } from "./cooldowns/CooldownManager.ts";
 export * from "./events/eventTypes.ts";
 export { GlobalPluginEventManager } from "./events/GlobalPluginEventManager.ts";

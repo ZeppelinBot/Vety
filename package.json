@@ -6,9 +6,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "npm run build-debug && mocha dist --recursive -r dist/testHooks.js --trace-uncaught",
-    "test-debug": "npm run build-debug && why-is-node-running ./node_modules/.bin/mocha dist --recursive",
-    "build-debug": "rm -rf dist && rm -f tsconfig.tsbuildinfo && tsc --sourceMap true",
+    "test": "node --test 'src/**/*.test.ts'",
+    "test:debug": "node --import why-is-node-running/include --test 'src/**/*.test.ts'",
+    "typecheck": "tsc --noEmit",
     "build": "rm -rf dist && rm -f tsconfig.tsbuildinfo && tsc --sourceMap false && cp .npmignore dist/",
     "preversion": "npm run test && npm run biome-check",
     "prepublishOnly": "npm run test && npm run build",
@@ -38,11 +38,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@types/chai": "^5.2.2",
-    "@types/mocha": "^10.0.10",
     "@types/node": "^24.13.3",
-    "chai": "^5.2.0",
-    "mocha": "^11.4.0",
     "oxfmt": "^0.61.0",
     "oxlint": "^1.76.0",
     "typescript": "^7.0.2",

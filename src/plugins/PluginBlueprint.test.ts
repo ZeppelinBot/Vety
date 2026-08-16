@@ -1,7 +1,7 @@
-import { assert, expect } from "chai";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import type { ChatInputCommandInteraction, TextChannel } from "discord.js";
 import { parseSignature } from "knub-command-manager";
-import { describe, it } from "mocha";
 import z from "zod";
 import { guildPluginMessageContextMenuCommand } from "../commands/contextMenuCommands/contextMenuCommandBlueprint.ts";
 import { PluginContextMenuCommandManager } from "../commands/contextMenuCommands/PluginContextMenuCommandManager.ts";
@@ -43,8 +43,8 @@ type AssertEquals<TActual, TExpected> = TActual extends TExpected ? true : false
 
 describe("PluginBlueprint", () => {
   describe("Commands and events", () => {
-    it("loads commands and events", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("loads commands and events", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad = guildPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -82,8 +82,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("guild events are only passed to the matching guild", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("guild events are only passed to the matching guild", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad = guildPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -144,8 +144,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("global events are not passed to guild event listeners", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("global events are not passed to guild event listeners", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad = guildPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -186,8 +186,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("global events are passed to global event listeners", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("global events are passed to global event listeners", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad = globalPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -215,8 +215,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("guild events are passed to global event listeners", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("guild events are passed to global event listeners", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad = globalPlugin({
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -251,8 +251,8 @@ describe("PluginBlueprint", () => {
     });
 
     describe("Message commands", () => {
-      it("command permissions", (mochaDone) => {
-        withVety(mochaDone, async (createVety, done) => {
+      it("command permissions", (_, testDone) => {
+        withVety(testDone, async (createVety, done) => {
           const infoCmdCallUsers: string[] = [];
           const serverCmdCallUsers: string[] = [];
           const pingCmdCallUsers: string[] = [];
@@ -452,8 +452,8 @@ describe("PluginBlueprint", () => {
   });
 
   describe("Lifecycle hooks", () => {
-    it("GuildPlugin beforeLoad()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GuildPlugin beforeLoad()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -479,8 +479,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GlobalPlugin beforeLoad()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GlobalPlugin beforeLoad()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -500,8 +500,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GuildPlugin beforeStart()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GuildPlugin beforeStart()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -527,8 +527,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GlobalPlugin beforeStart()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GlobalPlugin beforeStart()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -548,8 +548,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GuildPlugin afterLoad()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GuildPlugin afterLoad()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -575,8 +575,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GlobalPlugin afterLoad()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GlobalPlugin afterLoad()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -596,8 +596,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GuildPlugin beforeUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GuildPlugin beforeUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const beforeUnloadCalled = false;
         const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-unload",
@@ -628,8 +628,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GlobalPlugin beforeUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GlobalPlugin beforeUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -650,8 +650,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GuildPlugin afterUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GuildPlugin afterUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-unload",
           configSchema: z.strictObject({}),
@@ -681,8 +681,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GlobalPlugin afterUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GlobalPlugin afterUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -703,8 +703,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GuildPlugin afterLoad() runs after beforeLoad()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GuildPlugin afterLoad() runs after beforeLoad()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         let beforeLoadCalled = false;
 
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
@@ -737,8 +737,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GlobalPlugin afterLoad() runs after beforeLoad()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GlobalPlugin afterLoad() runs after beforeLoad()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         let beforeLoadCalled = false;
 
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
@@ -765,8 +765,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GuildPlugin beforeUnload() runs before afterUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GuildPlugin beforeUnload() runs before afterUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         let beforeUnloadCalled = false;
 
         const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
@@ -803,8 +803,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GlobalPlugin beforeUnload() runs before afterUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GlobalPlugin beforeUnload() runs before afterUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         let beforeUnloadCalled = false;
 
         const PluginToUnload: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
@@ -832,8 +832,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("hasPlugin() and getPlugin() are unavailable in GuildPlugin beforeLoad()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("hasPlugin() and getPlugin() are unavailable in GuildPlugin beforeLoad()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -861,8 +861,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("hasPlugin() and getPlugin() are unavailable in GlobalPlugin beforeLoad()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("hasPlugin() and getPlugin() are unavailable in GlobalPlugin beforeLoad()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -884,8 +884,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("hasPlugin() and getPlugin() are unavailable in GuildPlugin afterUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("hasPlugin() and getPlugin() are unavailable in GuildPlugin afterUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "plugin-to-unload",
           configSchema: z.strictObject({}),
@@ -917,8 +917,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("hasPlugin() and getPlugin() are unavailable in GlobalPlugin afterUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("hasPlugin() and getPlugin() are unavailable in GlobalPlugin afterUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "plugin-to-load",
           configSchema: z.strictObject({}),
@@ -941,8 +941,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GuildPlugin is unavailable to other plugins during afterUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GuildPlugin is unavailable to other plugins during afterUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginWithPublicInterface = guildPlugin<BasePluginType>()({
           name: "plugin-with-public-interface",
           configSchema: z.strictObject({}),
@@ -981,8 +981,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GlobalPlugin is unavailable to other plugins during afterUnload()", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GlobalPlugin is unavailable to other plugins during afterUnload()", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const PluginWithPublicInterface = globalPlugin<BasePluginType>()({
           name: "plugin-with-public-interface",
           configSchema: z.strictObject({}),
@@ -1015,8 +1015,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GuildPlugin hook order", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GuildPlugin hook order", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         let lastCalledHook: string | null = null;
 
         const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
@@ -1061,8 +1061,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("GlobalPlugin hook order", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("GlobalPlugin hook order", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         let lastCalledHook: string | null = null;
 
         const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
@@ -1103,8 +1103,8 @@ describe("PluginBlueprint", () => {
   });
 
   describe("Dependencies", () => {
-    it("hasPlugin", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("hasPlugin", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const DependencyToLoad = guildPlugin({
           name: "dependency-to-load",
           configSchema: z.strictObject({}),
@@ -1143,8 +1143,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("getPlugin", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("getPlugin", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         interface DependencyPluginType extends BasePluginType {
           state: { value: number };
         }
@@ -1193,8 +1193,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("hasGlobalPlugin", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("hasGlobalPlugin", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const SomeGlobalPlugin = globalPlugin({
           name: "some-global-plugin",
           configSchema: z.strictObject({}),
@@ -1233,8 +1233,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("getPlugin", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("getPlugin", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const SomeGlobalPlugin = globalPlugin({
           name: "some-global-plugin",
           configSchema: z.strictObject({}),
@@ -1273,8 +1273,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("getPlugin has correct pluginData", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("getPlugin has correct pluginData", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const DependencyToLoad = guildPlugin({
           name: "dependency-to-load",
           configSchema: z.strictObject({
@@ -1322,8 +1322,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("automatic dependency loading", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("automatic dependency loading", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const DependencyToLoad = guildPlugin({
           name: "dependency-to-load",
           configSchema: z.strictObject({}),
@@ -1363,8 +1363,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("transitive dependencies", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("transitive dependencies", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const DependencyTwo = guildPlugin({
           name: "dependency-two",
           configSchema: z.strictObject({}),
@@ -1404,8 +1404,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("plugins loaded as dependencies do not load commands or events", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("plugins loaded as dependencies do not load commands or events", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const Dependency = guildPlugin({
           name: "dependency",
           configSchema: z.strictObject({}),
@@ -1447,8 +1447,8 @@ describe("PluginBlueprint", () => {
   });
 
   describe("Custom overrides", () => {
-    it("Synchronous custom overrides", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("Synchronous custom overrides", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         let commandTriggers = 0;
 
         interface PluginType extends BasePluginType {
@@ -1532,8 +1532,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("Asynchronous custom overrides", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("Asynchronous custom overrides", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         let commandTriggers = 0;
 
         interface PluginType extends BasePluginType {
@@ -1623,8 +1623,8 @@ describe("PluginBlueprint", () => {
   });
 
   describe("Custom argument types", () => {
-    it("Custom argument types", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("Custom argument types", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const types = {
           foo: (value, ctx) => {
             return `${value}-${ctx.pluginData.guild.id}`;
@@ -1678,8 +1678,8 @@ describe("PluginBlueprint", () => {
   });
 
   describe("Misc", () => {
-    it("pluginData contains everything (guild plugin)", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("pluginData contains everything (guild plugin)", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const TestPlugin: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
           name: "test-plugin",
           configSchema: z.strictObject({}),
@@ -1713,8 +1713,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("pluginData contains everything (global plugin)", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("pluginData contains everything (global plugin)", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         const TestPlugin: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
           name: "test-plugin",
           configSchema: z.strictObject({}),
@@ -1742,8 +1742,8 @@ describe("PluginBlueprint", () => {
       });
     });
 
-    it("event handlers are unloaded on plugin unload", (mochaDone) => {
-      withVety(mochaDone, async (createVety, done) => {
+    it("event handlers are unloaded on plugin unload", (_, testDone) => {
+      withVety(testDone, async (createVety, done) => {
         let msgEvFnCallNum = 0;
 
         const messageEv = guildPluginEventListener({
@@ -1799,7 +1799,7 @@ describe("PluginBlueprint", () => {
         configSchema: z.strictObject({}),
       });
 
-      expect(blueprint.name).to.equal("my-plugin");
+      assert.strictEqual(blueprint.name, "my-plugin");
     });
 
     interface CustomPluginType extends BasePluginType {
@@ -1821,7 +1821,7 @@ describe("PluginBlueprint", () => {
         },
       });
 
-      expect(blueprint.name).to.equal("my-plugin");
+      assert.strictEqual(blueprint.name, "my-plugin");
     });
   });
 

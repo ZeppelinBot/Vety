@@ -1,5 +1,5 @@
-import { assert, expect } from "chai";
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import { z } from "zod";
 import type { BasePluginData, GuildPluginData } from "../plugins/PluginData.ts";
 import type { BasePluginType } from "../plugins/pluginTypes.ts";
@@ -46,9 +46,9 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().can_do).to.equal(true);
-    expect(configManager.get().nested.one).to.equal(10);
-    expect(configManager.get().nested.two).to.equal(30);
+    assert.strictEqual(configManager.get().can_do, true);
+    assert.strictEqual(configManager.get().nested.one, 10);
+    assert.strictEqual(configManager.get().nested.two, 30);
   });
 
   it("merge user overrides with default overrides", async () => {
@@ -91,10 +91,10 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().can_do).to.equal(false);
-    expect((await configManager.getMatchingConfig({ level: 20 })).can_do).to.equal(true);
-    expect((await configManager.getMatchingConfig({ level: 40 })).can_do).to.equal(false);
-    expect((await configManager.getMatchingConfig({ level: 50 })).can_do).to.equal(false);
+    assert.strictEqual(configManager.get().can_do, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ level: 20 })).can_do, true);
+    assert.strictEqual((await configManager.getMatchingConfig({ level: 40 })).can_do, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ level: 50 })).can_do, false);
   });
 
   it("replace default overrides", async () => {
@@ -132,9 +132,9 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().can_do).to.equal(false);
-    expect((await configManager.getMatchingConfig({ level: 50 })).can_do).to.equal(false);
-    expect((await configManager.getMatchingConfig({ level: 100 })).can_do).to.equal(true);
+    assert.strictEqual(configManager.get().can_do, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ level: 50 })).can_do, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ level: 100 })).can_do, true);
   });
 
   it("Config schema", async () => {
@@ -195,7 +195,7 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().something).to.equal(7);
+    assert.strictEqual(configManager.get().something, 7);
   });
 
   it("getMatchingConfig(): user", async () => {
@@ -231,10 +231,10 @@ describe("PluginConfigManager", () => {
     configManager.setPluginData({ context: "guild", guild } as GuildPluginData<any>);
     await configManager.init();
 
-    expect(configManager.get().works).to.equal(false);
-    expect((await configManager.getMatchingConfig({ userId: user.id })).works).to.equal(true);
-    expect((await configManager.getMatchingConfig({ member })).works).to.equal(true);
-    expect((await configManager.getMatchingConfig({ message })).works).to.equal(true);
+    assert.strictEqual(configManager.get().works, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ userId: user.id })).works, true);
+    assert.strictEqual((await configManager.getMatchingConfig({ member })).works, true);
+    assert.strictEqual((await configManager.getMatchingConfig({ message })).works, true);
   });
 
   it("getMatchingConfig(): channel", async () => {
@@ -268,9 +268,9 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().works).to.equal(false);
-    expect((await configManager.getMatchingConfig({ channelId: channel.id })).works).to.equal(true);
-    expect((await configManager.getMatchingConfig({ message })).works).to.equal(true);
+    assert.strictEqual(configManager.get().works, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ channelId: channel.id })).works, true);
+    assert.strictEqual((await configManager.getMatchingConfig({ message })).works, true);
   });
 
   it("getMatchingConfig(): channel of thread message", async () => {
@@ -305,8 +305,8 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().works).to.equal(false);
-    expect((await configManager.getMatchingConfig({ message })).works).to.equal(true);
+    assert.strictEqual(configManager.get().works, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ message })).works, true);
   });
 
   it("getMatchingConfig(): category", async () => {
@@ -341,9 +341,9 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().works).to.equal(false);
-    expect((await configManager.getMatchingConfig({ categoryId })).works).to.equal(true);
-    expect((await configManager.getMatchingConfig({ message })).works).to.equal(true);
+    assert.strictEqual(configManager.get().works, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ categoryId })).works, true);
+    assert.strictEqual((await configManager.getMatchingConfig({ message })).works, true);
   });
 
   it("getMatchingConfig(): category of thread message", async () => {
@@ -379,8 +379,8 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().works).to.equal(false);
-    expect((await configManager.getMatchingConfig({ message })).works).to.equal(true);
+    assert.strictEqual(configManager.get().works, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ message })).works, true);
   });
 
   it("getMatchingConfig(): thread", async () => {
@@ -415,8 +415,8 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().works).to.equal(false);
-    expect((await configManager.getMatchingConfig({ message })).works).to.equal(true);
+    assert.strictEqual(configManager.get().works, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ message })).works, true);
   });
 
   it("getMatchingConfig(): is_thread", async () => {
@@ -451,8 +451,8 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().works).to.equal(false);
-    expect((await configManager.getMatchingConfig({ message })).works).to.equal(true);
+    assert.strictEqual(configManager.get().works, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ message })).works, true);
   });
 
   it("getMatchingConfig(): roles", async () => {
@@ -489,10 +489,10 @@ describe("PluginConfigManager", () => {
     configManager.setPluginData({ context: "guild", guild } as GuildPluginData<any>);
     await configManager.init();
 
-    expect(configManager.get().works).to.equal(false);
-    expect((await configManager.getMatchingConfig({ memberRoles: [role.id] })).works).to.equal(true);
-    expect((await configManager.getMatchingConfig({ member })).works).to.equal(true);
-    expect((await configManager.getMatchingConfig({ message })).works).to.equal(true);
+    assert.strictEqual(configManager.get().works, false);
+    assert.strictEqual((await configManager.getMatchingConfig({ memberRoles: [role.id] })).works, true);
+    assert.strictEqual((await configManager.getMatchingConfig({ member })).works, true);
+    assert.strictEqual((await configManager.getMatchingConfig({ message })).works, true);
   });
 
   // Test for bug fixed in commit 77c9a0df53b1699d8a2c396d22bef29aeca9483a
@@ -528,7 +528,7 @@ describe("PluginConfigManager", () => {
     );
     await configManager.init();
 
-    expect(configManager.get().transformed).to.equal(20);
+    assert.strictEqual(configManager.get().transformed, 20);
   });
 
   it("reject invalid override criteria", async () => {

@@ -1,6 +1,6 @@
-import { assert, expect } from "chai";
 import type { Client } from "discord.js";
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import z from "zod/v4";
 import { guildPluginMessageCommand } from "./commands/messageCommands/messageCommandBlueprint.ts";
 import { guildPlugin } from "./plugins/PluginBlueprint.ts";
@@ -17,8 +17,8 @@ import {
 import { noop } from "./utils.ts";
 
 describe("Vety", () => {
-  it("Multiple GUILD_CREATE events load guild's plugins only once", (mochaDone) => {
-    withVety(mochaDone, async (createVety, done) => {
+  it("Multiple GUILD_CREATE events load guild's plugins only once", (_, testDone) => {
+    withVety(testDone, async (createVety, done) => {
       let loadedTimes = 0;
 
       const PluginToLoad = guildPlugin({
@@ -61,8 +61,8 @@ describe("Vety", () => {
     });
   });
 
-  it("GUILD_CREATE followed by ready event load guild's plugins only once", (mochaDone) => {
-    withVety(mochaDone, async (createVety, done) => {
+  it("GUILD_CREATE followed by ready event load guild's plugins only once", (_, testDone) => {
+    withVety(testDone, async (createVety, done) => {
       let loadedTimes = 0;
 
       const PluginToLoad = guildPlugin({
@@ -95,14 +95,14 @@ describe("Vety", () => {
       await sleep(30);
       vety.client.emit("clientReady", vety.client as Client<true>);
       await sleep(30);
-      assert(loadedTimes === 1);
+      assert.strictEqual(loadedTimes, 1);
 
       done();
     });
   });
 
-  it("Errors during plugin loading unloads guild", (mochaDone) => {
-    withVety(mochaDone, async (createVety, done) => {
+  it("Errors during plugin loading unloads guild", (_, testDone) => {
+    withVety(testDone, async (createVety, done) => {
       let loadedTimes = 0;
 
       const Plugin1 = guildPlugin({
@@ -152,15 +152,15 @@ describe("Vety", () => {
       vety.client.ws.emit("GUILD_CREATE", guild);
       await sleep(10);
 
-      expect(vety.getLoadedGuild(guild.id)).to.equal(undefined);
-      expect(loadedTimes).to.equal(0);
+      assert.strictEqual(vety.getLoadedGuild(guild.id), undefined);
+      assert.strictEqual(loadedTimes, 0);
 
       done();
     });
   });
 
-  it("concurrentGuildLoadLimit", (mochaDone) => {
-    withVety(mochaDone, async (createVety, done) => {
+  it("concurrentGuildLoadLimit", (_, testDone) => {
+    withVety(testDone, async (createVety, done) => {
       const concurrentGuildLoadLimit = 10;
       const loadTimeMs = 40;
       let loadedTimes = 0;
@@ -204,8 +204,8 @@ describe("Vety", () => {
     });
   });
 
-  it("dispatchMessageCommands runs commands once and skips default handlers", (mochaDone) => {
-    withVety(mochaDone, async (createVety, done) => {
+  it("dispatchMessageCommands runs commands once and skips default handlers", (_, testDone) => {
+    withVety(testDone, async (createVety, done) => {
       let runCount = 0;
 
       const DispatcherPlugin = guildPlugin({
@@ -256,17 +256,17 @@ describe("Vety", () => {
       });
 
       await vety.dispatchMessageCommands(message as any);
-      expect(runCount).to.equal(1);
+      assert.strictEqual(runCount, 1);
 
       vety.client.emit("messageCreate", message);
-      expect(runCount).to.equal(1);
+      assert.strictEqual(runCount, 1);
 
       done();
     });
   });
 
-  it("Unloading a guild waits for running event listeners to finish", (mochaDone) => {
-    withVety(mochaDone, async (createVety, done) => {
+  it("Unloading a guild waits for running event listeners to finish", (_, testDone) => {
+    withVety(testDone, async (createVety, done) => {
       let listenerDone = false;
       const Plugin = guildPlugin({
         name: "plugin",
@@ -302,14 +302,14 @@ describe("Vety", () => {
       vety.client.emit("messageCreate", message);
       await vety.unloadGuild(guild.id);
 
-      assert.isTrue(listenerDone);
+      assert.strictEqual(listenerDone, true);
 
       done();
     });
   });
 
-  it("Unloading a guild deals with event registration race conditions", (mochaDone) => {
-    withVety(mochaDone, async (createVety, done) => {
+  it("Unloading a guild deals with event registration race conditions", (_, testDone) => {
+    withVety(testDone, async (createVety, done) => {
       let cnt = 1;
       const Plugin = guildPlugin({
         name: "plugin",

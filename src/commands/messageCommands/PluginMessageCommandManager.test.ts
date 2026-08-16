@@ -1,5 +1,5 @@
-import { expect } from "chai";
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import { createMockClient } from "../../testUtils.ts";
 import { type CommandRemovedEvent, PluginMessageCommandManager } from "./PluginMessageCommandManager.ts";
 
@@ -41,19 +41,19 @@ describe("PluginMessageCommandManager", () => {
     };
 
     manager.add(blueprint as any);
-    expect(addedTriggers).to.deep.equal(["foo"]);
-    expect(removedEvents).to.have.length(0);
+    assert.deepStrictEqual(addedTriggers, ["foo"]);
+    assert.strictEqual(removedEvents.length, 0);
 
     const command = manager.getAll()[0]!;
     manager.remove(command.id);
-    expect(removedEvents).to.have.length(1);
-    expect(removedEvents[0]!.reason).to.equal("manual");
+    assert.strictEqual(removedEvents.length, 1);
+    assert.strictEqual(removedEvents[0]!.reason, "manual");
 
     manager.add(blueprint as any);
-    expect(addedTriggers).to.deep.equal(["foo", "foo"]);
+    assert.deepStrictEqual(addedTriggers, ["foo", "foo"]);
 
     manager.removeByTrigger("foo");
-    expect(removedEvents).to.have.length(2);
-    expect(removedEvents[1]!.reason).to.equal("manual");
+    assert.strictEqual(removedEvents.length, 2);
+    assert.strictEqual(removedEvents[1]!.reason, "manual");
   });
 });

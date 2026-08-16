@@ -1,5 +1,5 @@
-import { assert } from "chai";
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import { sleep } from "../testUtils.ts";
 import { LockManager } from "./LockManager.ts";
 
@@ -96,7 +96,7 @@ describe("LockManager", () => {
     await lockManager.destroy();
   });
 
-  it("acquiring a lock throws an error if lock is destroyed", (done) => {
+  it("acquiring a lock throws an error if lock is destroyed", (_, done) => {
     (async () => {
       const lockName = "lock";
       const lockManager = new LockManager(60 * 1000);

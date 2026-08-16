@@ -1,5 +1,3 @@
-import Timeout = NodeJS.Timeout;
-
 import { noop } from "../utils.ts";
 
 const DEFAULT_LOCK_TIMEOUT = 10 * 1000;
@@ -58,13 +56,13 @@ export class LockManager {
   protected lockPromises: Map<string, Promise<Lock>>;
   protected acquiredLocks: Map<string, Lock>;
   protected lockTimeout: number;
-  protected lockGCTimeouts: Map<string, Timeout>;
+  protected lockGCTimeouts: Map<string, NodeJS.Timeout>;
 
   constructor(lockTimeout = DEFAULT_LOCK_TIMEOUT) {
     this.lockPromises = new Map();
     this.acquiredLocks = new Map();
     this.lockTimeout = lockTimeout;
-    this.lockGCTimeouts = new Map<string, Timeout>();
+    this.lockGCTimeouts = new Map<string, NodeJS.Timeout>();
   }
 
   public acquire(keys: string | string[], lockTimeout?: number): Promise<Lock> {

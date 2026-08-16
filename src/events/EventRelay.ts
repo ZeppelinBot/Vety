@@ -26,11 +26,16 @@ export class EventRelay {
   protected guildListeners: GuildListenerMap = new Map() as GuildListenerMap;
   protected anyListeners: AnyListenerMap = new Map() as AnyListenerMap;
   protected registeredRelays: Set<ValidEvent> = new Set();
+  protected client: Client;
+  protected profiler: Profiler
 
   constructor(
-    protected client: Client,
-    protected profiler: Profiler,
-  ) {}
+    client: Client,
+    profiler: Profiler,
+  ) {
+    this.client = client;
+    this.profiler = profiler;
+  }
 
   onGuildEvent<TEvent extends GuildEvent>(guildId: string, ev: TEvent, listener: RelayListener<TEvent>): void {
     if (!this.guildListeners.has(guildId)) {

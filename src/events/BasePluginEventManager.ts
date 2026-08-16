@@ -37,8 +37,11 @@ export abstract class BasePluginEventManager<TPluginData extends AnyPluginData<a
   protected pluginData: TPluginData | undefined;
   protected runningListeners: Set<Promise<void>> = new Set();
   protected loaded = true;
+  protected eventRelay: EventRelay;
 
-  constructor(protected eventRelay: EventRelay) {}
+  constructor(eventRelay: EventRelay) {
+    this.eventRelay = eventRelay;
+  }
 
   public setPluginData(pluginData: TPluginData): void {
     if (this.pluginData) {

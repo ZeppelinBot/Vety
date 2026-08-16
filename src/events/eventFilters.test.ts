@@ -1,6 +1,6 @@
-import { assert } from "chai";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import type { Message, OmitPartialGroupDMChannel } from "discord.js";
-import { describe, it } from "mocha";
 import type { GlobalPluginData, GuildPluginData } from "../plugins/PluginData.ts";
 import { onlyGuild } from "./eventFilters.ts";
 

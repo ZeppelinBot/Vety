@@ -1,6 +1,6 @@
-import { expect } from "chai";
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
 import type { Channel, GuildChannel, GuildTextBasedChannel, Message, TextBasedChannel } from "discord.js";
-import { describe, it } from "mocha";
 import type { BasePluginType } from "../plugins/pluginTypes.ts";
 import type { GuildMessage } from "../types.ts";
 import { globalPluginEventListener, guildPluginEventListener } from "./EventListenerBlueprint.ts";
@@ -14,9 +14,9 @@ describe("guildPluginEventListener() helper", () => {
       listener() {},
     });
 
-    expect(blueprint1.event).to.equal("messageCreate");
-    expect(blueprint1.listener).to.not.equal(undefined);
-    expect(blueprint1.allowSelf).to.equal(undefined);
+    assert.strictEqual(blueprint1.event, "messageCreate");
+    assert.notStrictEqual(blueprint1.listener, undefined);
+    assert.strictEqual(blueprint1.allowSelf, undefined);
   });
 
   it("(blueprint) guild event argument inference", () => {
@@ -58,9 +58,9 @@ describe("guildPluginEventListener() helper", () => {
       listener() {},
     });
 
-    expect(blueprint.event).to.equal("messageCreate");
-    expect(blueprint.listener).to.not.equal(undefined);
-    expect(blueprint.allowSelf).to.equal(undefined);
+    assert.strictEqual(blueprint.event, "messageCreate");
+    assert.notStrictEqual(blueprint.listener, undefined);
+    assert.strictEqual(blueprint.allowSelf, undefined);
   });
 });
 
@@ -71,9 +71,9 @@ describe("globalPluginEventListener() helper", () => {
       listener() {},
     });
 
-    expect(blueprint.event).to.equal("messageCreate");
-    expect(blueprint.listener).to.not.equal(undefined);
-    expect(blueprint.allowSelf).to.equal(undefined);
+    assert.strictEqual(blueprint.event, "messageCreate");
+    assert.notStrictEqual(blueprint.listener, undefined);
+    assert.strictEqual(blueprint.allowSelf, undefined);
   });
 
   it("(blueprint) guild event argument inference", () => {
@@ -115,8 +115,8 @@ describe("globalPluginEventListener() helper", () => {
       listener() {},
     });
 
-    expect(blueprint.event).to.equal("messageCreate");
-    expect(blueprint.listener).to.not.equal(undefined);
-    expect(blueprint.allowSelf).to.equal(undefined);
+    assert.strictEqual(blueprint.event, "messageCreate");
+    assert.notStrictEqual(blueprint.listener, undefined);
+    assert.strictEqual(blueprint.allowSelf, undefined);
   });
 });
