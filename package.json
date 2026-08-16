@@ -14,8 +14,7 @@
     "prepublishOnly": "npm run test && npm run build",
     "watch": "shx touch dist && shx rm -r dist && tsc --watch",
     "biome-check": "biome check ./src",
-    "biome-fix": "biome check --write ./src",
-    "prepare": "husky"
+    "biome-fix": "biome check --write ./src"
   },
   "main": "dist/index.js",
   "exports": {
@@ -42,7 +41,6 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.15.18",
     "chai": "^5.2.0",
-    "husky": "^9.1.7",
     "mocha": "^11.4.0",
     "shx": "^0.4.0",
     "typescript": "^7.0.2",

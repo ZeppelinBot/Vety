@@ -36,9 +36,6 @@ importers:
       chai:
         specifier: ^5.2.0
         version: 5.3.3
-      husky:
-        specifier: ^9.1.7
-        version: 9.1.7
       mocha:
         specifier: ^11.4.0
         version: 11.7.6
@@ -508,11 +505,6 @@ packages:
 
   he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
-    hasBin: true
-
-  husky@9.1.7:
-    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
-    engines: {node: '>=18'}
     hasBin: true
 
   interpret@1.4.0:
@@ -1395,8 +1387,6 @@ snapshots:
       function-bind: 1.1.2
 
   he@1.2.0: {}
-
-  husky@9.1.7: {}
 
   interpret@1.4.0: {}
 
