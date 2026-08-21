@@ -1,3 +1,4 @@
+import type { ZodType } from "zod";
 import type {
   MessageContextMenuCommandBlueprint,
   UserContextMenuCommandBlueprint,
@@ -15,7 +16,10 @@ import type { Awaitable } from "../utils.ts";
 import type { AnyPluginData, GlobalPluginData, GuildPluginData } from "./PluginData.ts";
 import type { BasePluginType } from "./pluginTypes.ts";
 
-export interface BasePluginBlueprint<TPluginData extends AnyPluginData<any>, TPublicInterface> {
+export interface BasePluginBlueprint<
+  TPluginData extends AnyPluginData<any>,
+  TPublicInterface,
+> {
   /**
    * **[Required]** Internal name for the plugin
    */
@@ -26,7 +30,7 @@ export interface BasePluginBlueprint<TPluginData extends AnyPluginData<any>, TPu
   /**
    * Zod schema for this plugin's config. Default values can be included using zod's default() function.
    */
-  configSchema: TPluginData["_pluginType"]["configSchema"];
+  configSchema: ZodType<TPluginData["_pluginType"]["configOutput"], TPluginData["_pluginType"]["configInput"]>;
 
   messageCommands?: Array<MessageCommandBlueprint<TPluginData, any>>;
 

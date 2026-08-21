@@ -3,6 +3,7 @@ import type { BasePluginData } from "../plugins/PluginData.ts";
 import type { BasePluginType } from "../plugins/pluginTypes.ts";
 import { typedKeys } from "../utils.ts";
 import type { CustomOverrideCriteriaFunctions, PluginOptions, PluginOverride } from "./configTypes.ts";
+import type { ZodType } from "zod";
 
 const levelRangeRegex = /^([<>=!]+)(\d+)$/;
 const splitLevelRange = (v: string, defaultMod: string): [string, number] => {
@@ -75,12 +76,12 @@ export async function getMatchingPluginConfig<
   matchParams,
   customOverrideCriteriaFunctions,
 }: {
-  configSchema: TPluginData["_pluginType"]["configSchema"];
+  configSchema: ZodType<TPluginData["_pluginType"]["configOutput"], TPluginData["_pluginType"]["configInput"]>;
   pluginData: TPluginData;
   pluginOptions: TPluginOptions;
   matchParams: MatchParams<TPluginData["_pluginType"]["customOverrideMatchParams"]>;
   customOverrideCriteriaFunctions?: CustomOverrideCriteriaFunctions<TPluginData>;
-}): Promise<z.output<TPluginData["_pluginType"]["configSchema"]>> {
+}): Promise<TPluginData["_pluginType"]["configOutput"]> {
   let unparsedResult = mergeConfig(pluginOptions.config || {});
 
   const overrides = pluginOptions.overrides || [];

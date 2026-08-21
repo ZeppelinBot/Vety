@@ -66,7 +66,8 @@ describe("configUtils", () => {
       hasAccess: z.boolean().default(false),
     });
     interface SharedPluginType extends BasePluginType {
-      configSchema: typeof sharedConfigSchema;
+      configInput: z.input<typeof sharedConfigSchema>;
+      configOutput: z.output<typeof sharedConfigSchema>;
     }
 
     const sharedPluginOptions: PluginOptions<SharedPluginType> = {
@@ -239,7 +240,8 @@ describe("configUtils", () => {
         value: z.number().default(5),
       });
       interface CustomPluginType extends BasePluginType {
-        configSchema: typeof customConfigSchema;
+        configInput: z.input<typeof customConfigSchema>;
+        configOutput: z.output<typeof customConfigSchema>;
         customOverrideCriteria: {
           bestPlant?: string;
           worstPlant?: string;
@@ -343,7 +345,8 @@ describe("configUtils", () => {
         value: z.number().default(5),
       });
       interface CustomPluginType extends BasePluginType {
-        configSchema: typeof customConfigSchema;
+        configInput: z.input<typeof customConfigSchema>;
+        configOutput: z.output<typeof customConfigSchema>;
         customOverrideCriteria: {
           bestPlant?: string;
           worstPlant?: string;

@@ -263,7 +263,8 @@ describe("PluginBlueprint", () => {
             can_use_ping_cmd: z.boolean().default(false),
           });
           interface PluginType extends BasePluginType {
-            configSchema: typeof configSchema;
+            configInput: z.input<typeof configSchema>;
+            configOutput: z.output<typeof configSchema>;
           }
 
           const TestPlugin = guildPlugin<PluginType>()({

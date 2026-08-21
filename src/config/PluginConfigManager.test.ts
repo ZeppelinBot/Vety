@@ -26,7 +26,8 @@ describe("PluginConfigManager", () => {
       }),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const configManager = new PluginConfigManager<GuildPluginData<PluginType>>(
@@ -56,7 +57,8 @@ describe("PluginConfigManager", () => {
       can_do: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const configManager = new PluginConfigManager<BasePluginData<PluginType>>(
@@ -102,7 +104,8 @@ describe("PluginConfigManager", () => {
       can_do: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const configManager = new PluginConfigManager<BasePluginData<PluginType>>(
@@ -178,7 +181,8 @@ describe("PluginConfigManager", () => {
         }),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const configManager = new PluginConfigManager<BasePluginData<PluginType>>(
@@ -203,7 +207,8 @@ describe("PluginConfigManager", () => {
       works: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const client = createMockClient();
@@ -242,7 +247,8 @@ describe("PluginConfigManager", () => {
       works: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const client = createMockClient();
@@ -278,7 +284,8 @@ describe("PluginConfigManager", () => {
       works: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const client = createMockClient();
@@ -314,7 +321,8 @@ describe("PluginConfigManager", () => {
       works: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const categoryId = "12345";
@@ -351,7 +359,8 @@ describe("PluginConfigManager", () => {
       works: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const categoryId = "12345";
@@ -388,7 +397,8 @@ describe("PluginConfigManager", () => {
       works: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const client = createMockClient();
@@ -424,7 +434,8 @@ describe("PluginConfigManager", () => {
       works: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const client = createMockClient();
@@ -460,7 +471,8 @@ describe("PluginConfigManager", () => {
       works: z.boolean().default(false),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const client = createMockClient();
@@ -502,7 +514,8 @@ describe("PluginConfigManager", () => {
       transformed: z.string().transform((v) => Number(v)),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const configManager = new PluginConfigManager<BasePluginData<PluginType>>(
@@ -534,7 +547,8 @@ describe("PluginConfigManager", () => {
   it("reject invalid override criteria", async () => {
     const configSchema = z.strictObject({});
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const configManager1 = new PluginConfigManager<BasePluginData<PluginType>>(
@@ -603,7 +617,8 @@ describe("PluginConfigManager", () => {
       value: z.number(),
     });
     interface PluginType extends BasePluginType {
-      configSchema: typeof configSchema;
+      configInput: z.input<typeof configSchema>;
+      configOutput: z.output<typeof configSchema>;
     }
 
     const configManager = new PluginConfigManager<BasePluginData<PluginType>>(
