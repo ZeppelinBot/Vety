@@ -6,8 +6,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "node --test 'src/**/*.test.ts'",
-    "test:debug": "node --import why-is-node-running/include --test 'src/**/*.test.ts'",
+    "test": "node --conditions=development --test 'src/**/*.test.ts'",
+    "test:debug": "node --conditions=development --import why-is-node-running/include --test 'src/**/*.test.ts'",
     "typecheck": "tsc --noEmit",
     "build": "rm -rf dist && rm -f tsconfig.tsbuildinfo && tsc --sourceMap false && cp .npmignore dist/",
     "preversion": "pnpm run test && pnpm run lint && pnpm run format:check",
@@ -28,6 +28,12 @@
       "types": "./dist/helpers.d.ts",
       "import": "./dist/helpers.js",
       "require": "./dist/helpers.js"
+    }
+  },
+  "imports": {
+    "#/*": {
+      "development": "./src/*.ts",
+      "default": "./dist/*.js"
     }
   },
   "dependencies": {

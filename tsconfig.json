@@ -19,7 +19,8 @@
     "alwaysStrict": true,
     "rewriteRelativeImportExtensions": true,
     "erasableSyntaxOnly": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "customConditions": ["development"]
   },
   "include": [
     "src/**/*"
