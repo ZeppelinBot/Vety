@@ -1,0 +1,15 @@
+{
+  "js/ts.preferences.importModuleSpecifier": "non-relative",
+
+  // UI Setting:
+  // TypeScript 7 > Experimental: Use Tsgo
+  "js/ts.experimental.useTsgo": true,
+
+  // Optional: use a local TypeScript package directory.
+  "js/ts.tsdk.path": "./node_modules/typescript",
+
+  // Prevent internal auto-imports from barrel index
+  "js/ts.preferences.autoImportFileExcludePatterns": [
+    "src/index.ts"
+  ]
+}
