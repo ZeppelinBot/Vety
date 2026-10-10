@@ -27,17 +27,10 @@ import { GlobalPluginEventManager } from "./events/GlobalPluginEventManager.ts";
 import { GuildPluginEventManager } from "./events/GuildPluginEventManager.ts";
 import { LockManager } from "./locks/LockManager.ts";
 import { Profiler } from "./Profiler.ts";
-import type {
-  AnyGlobalEventListenerBlueprint,
-  AnyGuildEventListenerBlueprint,
-  AnyPluginBlueprint,
-  GlobalPluginBlueprint,
-  GuildPluginBlueprint,
-} from "./plugins/PluginBlueprint.ts";
 import type { AnyPluginData, GlobalPluginData, GuildPluginData } from "./plugins/PluginData.ts";
 import { PluginLoadError } from "./plugins/PluginLoadError.ts";
 import { PluginNotLoadedError } from "./plugins/PluginNotLoadedError.ts";
-import type { BasePluginType } from "./plugins/pluginTypes.ts";
+import type { AnyPluginType } from "./plugins/pluginType.ts";
 import { defaultGetConfig, defaultGetEnabledGuildPlugins, type PluginPublicInterface } from "./plugins/pluginUtils.ts";
 import { UnknownPluginError } from "./plugins/UnknownPluginError.ts";
 import { Queue } from "./Queue.ts";
@@ -54,6 +47,9 @@ import type {
   VetyOptions,
 } from "./types.ts";
 import { get, notCallable } from "./utils.ts";
+import type { AnyPluginBlueprint } from "#/plugins/PluginBlueprint";
+import type { AnyGuildEventListenerBlueprint, GuildPluginBlueprint } from "#/plugins/GuildPlugin";
+import type { AnyGlobalEventListenerBlueprint, GlobalPluginBlueprint } from "#/plugins/GlobalPlugin";
 
 const defaultVetyArgs: VetyArgs = {
   guildPlugins: [],
@@ -244,9 +240,9 @@ export class Vety extends EventEmitter {
   /**
    * Create the partial PluginData that's passed to beforeLoad()
    */
-  protected async buildGuildPluginData<TPluginType extends BasePluginType>(
+  protected async buildGuildPluginData<TPluginType extends AnyPluginType>(
     ctx: GuildContext,
-    plugin: GuildPluginBlueprint<GuildPluginData<TPluginType>, any>,
+    plugin: GuildPluginBlueprint<TPluginType, any>,
     loadedAsDependency: boolean,
   ): Promise<GuildPluginData<TPluginType>> {
     const pluginOptionsInput = (get(ctx.config, `plugins.${plugin.name}`) as any) || {};
@@ -319,9 +315,9 @@ export class Vety extends EventEmitter {
   /**
    * Create the partial PluginData that's passed to beforeLoad()
    */
-  protected async buildGlobalPluginData<TPluginType extends BasePluginType>(
+  protected async buildGlobalPluginData<TPluginType extends AnyPluginType>(
     ctx: AnyContext,
-    plugin: GlobalPluginBlueprint<GlobalPluginData<TPluginType>, any>,
+    plugin: GlobalPluginBlueprint<TPluginType, any>,
     loadedAsDependency: boolean,
   ): Promise<GlobalPluginData<TPluginType>> {
     const pluginOptionsInput = (get(ctx.config, `plugins.${plugin.name}`) as any) || {};
@@ -668,7 +664,7 @@ export class Vety extends EventEmitter {
             pluginData.events.registerEventListener({
               ...eventListenerBlueprint,
               listener: eventListenerBlueprint.listener,
-            } as AnyGuildEventListenerBlueprint<GuildPluginData<any>>);
+            } as AnyGuildEventListenerBlueprint<any>);
           }
         }
 
@@ -826,7 +822,7 @@ export class Vety extends EventEmitter {
           pluginData.events.registerEventListener({
             ...eventListenerBlueprint,
             listener: eventListenerBlueprint.listener,
-          } as AnyGlobalEventListenerBlueprint<GlobalPluginData<any>>);
+          } as AnyGlobalEventListenerBlueprint<any>);
         }
       }
 

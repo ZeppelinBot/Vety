@@ -1,15 +1,11 @@
 import type { GuildMember, GuildTextBasedChannel, Message, Snowflake } from "discord.js";
 import type { BaseConfig } from "./config/configTypes.ts";
 import type { LockManager } from "./locks/LockManager.ts";
-import type {
-  AnyGlobalPluginBlueprint,
-  AnyGuildPluginBlueprint,
-  GlobalPluginBlueprint,
-  GuildPluginBlueprint,
-} from "./plugins/PluginBlueprint.ts";
 import type { GlobalPluginData, GuildPluginData } from "./plugins/PluginData.ts";
-import type { BasePluginType } from "./plugins/pluginTypes.ts";
+import type { AnyPluginType } from "./plugins/pluginType.ts";
 import type { Awaitable } from "./utils.ts";
+import type { AnyGuildPluginBlueprint, GuildPluginBlueprint } from "#/plugins/GuildPlugin";
+import type { AnyGlobalPluginBlueprint, GlobalPluginBlueprint } from "#/plugins/GlobalPlugin";
 
 export type GuildPluginMap = Map<string, AnyGuildPluginBlueprint>;
 export type GlobalPluginMap = Map<string, AnyGlobalPluginBlueprint>;
@@ -38,18 +34,18 @@ export interface VetyArgs {
   options: Partial<VetyOptions>;
 }
 
-export interface LoadedGuildPlugin<TPluginType extends BasePluginType> {
-  blueprint: GuildPluginBlueprint<GuildPluginData<TPluginType>, unknown>;
+export interface LoadedGuildPlugin<TPluginType extends AnyPluginType> {
+  blueprint: GuildPluginBlueprint<TPluginType, any>;
   pluginData: GuildPluginData<TPluginType>;
   onlyLoadedAsDependency: boolean;
 }
 
-export interface LoadedGlobalPlugin<TPluginType extends BasePluginType> {
-  blueprint: GlobalPluginBlueprint<GlobalPluginData<TPluginType>, unknown>;
+export interface LoadedGlobalPlugin<TPluginType extends AnyPluginType> {
+  blueprint: GlobalPluginBlueprint<TPluginType, any>;
   pluginData: GlobalPluginData<TPluginType>;
 }
 
-export type AnyLoadedPlugin<TPluginType extends BasePluginType> =
+export type AnyLoadedPlugin<TPluginType extends AnyPluginType> =
   | LoadedGuildPlugin<TPluginType>
   | LoadedGlobalPlugin<TPluginType>;
 

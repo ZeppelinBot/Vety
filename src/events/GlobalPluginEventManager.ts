@@ -1,5 +1,5 @@
+import type { AnyGlobalEventListenerBlueprint } from "#/plugins/GlobalPlugin";
 import type { GlobalPluginData } from "../index.ts";
-import type { AnyGlobalEventListenerBlueprint } from "../plugins/PluginBlueprint.ts";
 import { noop } from "../utils.ts";
 import { BasePluginEventManager, type Listener, type OnOpts, type WrappedListener } from "./BasePluginEventManager.ts";
 import { type FilteredListener, ignoreBots, ignoreSelf, withFilters } from "./eventFilters.ts";
@@ -8,7 +8,9 @@ import type { EventArguments, ValidEvent } from "./eventTypes.ts";
 export class GlobalPluginEventManager<
   TPluginData extends GlobalPluginData<any>,
 > extends BasePluginEventManager<TPluginData> {
-  registerEventListener<T extends AnyGlobalEventListenerBlueprint<TPluginData>>(blueprint: T): WrappedListener {
+  registerEventListener<T extends AnyGlobalEventListenerBlueprint<TPluginData["_pluginType"]>>(
+    blueprint: T,
+  ): WrappedListener {
     if (!this.loaded) {
       return noop;
     }
@@ -65,6 +67,6 @@ export class GlobalPluginEventManager<
       ...opts,
       event,
       listener,
-    } as AnyGlobalEventListenerBlueprint<TPluginData>);
+    } as AnyGlobalEventListenerBlueprint<TPluginData["_pluginType"]>);
   }
 }

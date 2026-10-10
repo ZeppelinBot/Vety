@@ -1,5 +1,5 @@
 import type { AnyPluginData, GlobalPluginData, GuildPluginData } from "../plugins/PluginData.ts";
-import type { BasePluginType } from "../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../plugins/pluginType.ts";
 import type { Listener, OnOpts } from "./BasePluginEventManager.ts";
 import type { GuildEvent, ValidEvent } from "./eventTypes.ts";
 
@@ -20,7 +20,7 @@ type EventListenerBlueprintCreator<TPluginData extends AnyPluginData<any>, TBase
   blueprint: EventListenerBlueprint<TPluginData, TEventName>,
 ) => EventListenerBlueprint<TPluginData, TEventName>;
 
-function eventListener<TPluginData extends AnyPluginData<BasePluginType>>(...args) {
+function eventListener<TPluginData extends AnyPluginData<AnyPluginType>>(...args) {
   if (args.length === 1) {
     // (blueprint)
     // Return event listener blueprint
@@ -49,7 +49,7 @@ export function guildPluginEventListener<TEventName extends GuildEvent>(
 /**
  * Specify `TPluginType` for type hints and return self
  */
-export function guildPluginEventListener<TPluginType extends BasePluginType>(): EventListenerBlueprintCreator<
+export function guildPluginEventListener<TPluginType extends AnyPluginType>(): EventListenerBlueprintCreator<
   GuildPluginData<TPluginType>,
   GuildEvent
 >;
@@ -72,7 +72,7 @@ export function globalPluginEventListener<TEventName extends ValidEvent>(
 /**
  * Specify `TPluginType` for type hints and return self
  */
-export function globalPluginEventListener<TPluginType extends BasePluginType>(): EventListenerBlueprintCreator<
+export function globalPluginEventListener<TPluginType extends AnyPluginType>(): EventListenerBlueprintCreator<
   GlobalPluginData<TPluginType>,
   ValidEvent
 >;

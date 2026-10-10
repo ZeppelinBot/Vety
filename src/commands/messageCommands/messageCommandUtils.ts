@@ -11,7 +11,7 @@ import {
 import { hasPermission } from "../../helpers.ts";
 import type { Lock } from "../../locks/LockManager.ts";
 import type { AnyPluginData, GuildPluginData } from "../../plugins/PluginData.ts";
-import type { BasePluginType } from "../../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../../plugins/pluginType.ts";
 import type { Awaitable } from "../../utils.ts";
 import type { MessageCommandBlueprint } from "./messageCommandBlueprint.ts";
 
@@ -175,7 +175,7 @@ export function restrictCommandSource(cmd: PluginCommandDefinition, context: Com
  * permission
  */
 export async function checkCommandPermission<
-  TPluginType extends BasePluginType,
+  TPluginType extends AnyPluginType,
   TPluginData extends AnyPluginData<TPluginType>,
 >(cmd: PluginCommandDefinition, context: CommandContext<TPluginData>): Promise<boolean> {
   const permission = cmd.config!.extra?.blueprint.permission;
@@ -200,7 +200,7 @@ export async function checkCommandPermission<
  * it on cooldown
  */
 export async function checkCommandCooldown<
-  TPluginType extends BasePluginType,
+  TPluginType extends AnyPluginType,
   TPluginData extends AnyPluginData<TPluginType>,
 >(cmd: PluginCommandDefinition, context: CommandContext<TPluginData>): Promise<boolean> {
   if (cmd.config!.extra?.blueprint.cooldown) {
@@ -235,7 +235,7 @@ export async function checkCommandCooldown<
  * interrupt command execution if the lock gets interrupted before it
  */
 export async function checkCommandLocks<
-  TPluginType extends BasePluginType,
+  TPluginType extends AnyPluginType,
   TPluginData extends AnyPluginData<TPluginType>,
 >(cmd: PluginCommandDefinition, context: CommandContext<TPluginData>): Promise<boolean> {
   if (!cmd.config?.extra?.blueprint.locks) {

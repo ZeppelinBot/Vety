@@ -2,12 +2,9 @@ import type { APIInteractionGuildMember, Guild, GuildMember, PartialGuildMember 
 import type { PermissionLevels } from "../config/configTypes.ts";
 import type { AnyContext, GlobalContext, GuildContext, GuildPluginMap } from "../types.ts";
 import type { KeyOfMap } from "../utils.ts";
-import type {
-  AnyGlobalPluginBlueprint,
-  AnyGuildPluginBlueprint,
-  AnyPluginBlueprint,
-  BasePluginBlueprint,
-} from "./PluginBlueprint.ts";
+import type { AnyPluginBlueprint } from "#/plugins/PluginBlueprint";
+import type { AnyGuildPluginBlueprint } from "#/plugins/GuildPlugin";
+import type { AnyGlobalPluginBlueprint } from "#/plugins/GlobalPlugin";
 
 export function getMemberRoles(member: GuildMember | PartialGuildMember | APIInteractionGuildMember): string[] {
   return Array.isArray(member.roles) ? member.roles : Array.from(member.roles.cache.values()).map((r) => r.id);
@@ -55,7 +52,7 @@ export function isGlobalBlueprintByContext(
   return true;
 }
 
-export type PluginPublicInterface<T extends BasePluginBlueprint<any, any>> =
+export type PluginPublicInterface<T extends AnyPluginBlueprint> =
   NonNullable<T["public"]> extends (...args: any[]) => infer R ? R : null;
 
 /**

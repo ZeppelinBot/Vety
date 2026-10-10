@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import * as assert from "node:assert/strict";
-import type { BasePluginType } from "../../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../../plugins/pluginType.ts";
 import { guildPluginSlashCommand } from "./slashCommandBlueprint.ts";
 import { slashOptions } from "./slashCommandOptions.ts";
 
@@ -26,7 +26,7 @@ describe("Slash command blueprints", () => {
       assert.ok(true);
     });
 
-    interface CustomPluginType extends BasePluginType {
+    interface CustomPluginType extends AnyPluginType {
       state: {
         foo: 5;
       };

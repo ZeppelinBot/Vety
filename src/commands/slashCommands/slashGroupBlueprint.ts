@@ -1,6 +1,6 @@
 import type { Locale, Permissions } from "discord.js";
 import type { AnyPluginData, GlobalPluginData, GuildPluginData } from "../../plugins/PluginData.ts";
-import type { BasePluginType } from "../../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../../plugins/pluginType.ts";
 import type { SlashCommandBlueprint } from "./slashCommandBlueprint.ts";
 
 export type SlashGroupBlueprint<TPluginData extends AnyPluginData<any>> = {
@@ -18,7 +18,7 @@ type SlashGroupBlueprintCreator<TPluginData extends AnyPluginData<any>> = (
   blueprint: Omit<SlashGroupBlueprint<TPluginData>, "type">,
 ) => SlashGroupBlueprint<TPluginData>;
 
-function slashGroup<TPluginData extends AnyPluginData<BasePluginType>>(...args) {
+function slashGroup<TPluginData extends AnyPluginData<AnyPluginType>>(...args) {
   if (args.length === 1) {
     // (blueprint)
     // Return group blueprint
@@ -49,7 +49,7 @@ export function guildPluginSlashGroup(
 /**
  * Specify `TPluginType` for type hints and return self
  */
-export function guildPluginSlashGroup<TPluginType extends BasePluginType>(): SlashGroupBlueprintCreator<
+export function guildPluginSlashGroup<TPluginType extends AnyPluginType>(): SlashGroupBlueprintCreator<
   GuildPluginData<TPluginType>
 >;
 
@@ -70,7 +70,7 @@ export function globalPluginSlashGroup(
 /**
  * Specify `TPluginType` for type hints and return self
  */
-export function globalPluginSlashGroup<TPluginType extends BasePluginType>(): SlashGroupBlueprintCreator<
+export function globalPluginSlashGroup<TPluginType extends AnyPluginType>(): SlashGroupBlueprintCreator<
   GlobalPluginData<TPluginType>
 >;
 

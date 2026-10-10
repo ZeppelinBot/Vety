@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import * as assert from "node:assert/strict";
 import type { Channel, GuildChannel, GuildTextBasedChannel, Message, TextBasedChannel } from "discord.js";
-import type { BasePluginType } from "../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../plugins/pluginType.ts";
 import type { GuildMessage } from "../types.ts";
 import { globalPluginEventListener, guildPluginEventListener } from "./EventListenerBlueprint.ts";
 
@@ -49,7 +49,7 @@ describe("guildPluginEventListener() helper", () => {
     });
   });
 
-  interface CustomPluginType extends BasePluginType {
+  interface CustomPluginType extends AnyPluginType {
     config: {
       foo: 5;
     };
@@ -109,7 +109,7 @@ describe("globalPluginEventListener() helper", () => {
     });
   });
 
-  interface CustomPluginType extends BasePluginType {
+  interface CustomPluginType extends AnyPluginType {
     config: {
       foo: 5;
     };

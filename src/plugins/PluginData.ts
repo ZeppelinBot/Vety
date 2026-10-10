@@ -8,18 +8,18 @@ import type { GlobalPluginEventManager } from "../events/GlobalPluginEventManage
 import type { GuildPluginEventManager } from "../events/GuildPluginEventManager.ts";
 import type { LockManager } from "../locks/LockManager.ts";
 import type { Vety } from "../Vety.ts";
-import type { BasePluginBlueprint } from "./PluginBlueprint.ts";
-import type { BasePluginType } from "./pluginTypes.ts";
+import type { AnyPluginType } from "./pluginType.ts";
 import type { PluginPublicInterface } from "./pluginUtils.ts";
+import type { AnyPluginBlueprint } from "#/plugins/PluginBlueprint";
 
-export type HasPluginFn = <T extends BasePluginBlueprint<any, unknown>>(plugin: T) => boolean;
-export type GetPluginFn = <T extends BasePluginBlueprint<any, unknown>>(plugin: T) => PluginPublicInterface<T>;
+export type HasPluginFn = <T extends AnyPluginBlueprint>(plugin: T) => boolean;
+export type GetPluginFn = <T extends AnyPluginBlueprint>(plugin: T) => PluginPublicInterface<T>;
 
 /**
  * PluginData for an unknown context.
  * The properties defined here will be present in all PluginData objects, regardless of context.
  */
-export type BasePluginData<TPluginType extends BasePluginType> = {
+export type BasePluginData<TPluginType extends AnyPluginType> = {
   /**
    * Fake property used for typing purposes
    */
@@ -85,7 +85,7 @@ export type BasePluginData<TPluginType extends BasePluginType> = {
 /**
  * PluginData for a guild context
  */
-export type GuildPluginData<TPluginType extends BasePluginType> = BasePluginData<TPluginType> & {
+export type GuildPluginData<TPluginType extends AnyPluginType> = BasePluginData<TPluginType> & {
   context: "guild";
 
   /**
@@ -103,7 +103,7 @@ export type GuildPluginData<TPluginType extends BasePluginType> = BasePluginData
 /**
  * PluginData for a global context
  */
-export type GlobalPluginData<TPluginType extends BasePluginType> = BasePluginData<TPluginType> & {
+export type GlobalPluginData<TPluginType extends AnyPluginType> = BasePluginData<TPluginType> & {
   context: "global";
 
   config: PluginConfigManager<GlobalPluginData<TPluginType>>;
@@ -113,17 +113,17 @@ export type GlobalPluginData<TPluginType extends BasePluginType> = BasePluginDat
   contextMenuCommands: PluginContextMenuCommandManager<GlobalPluginData<TPluginType>>;
 };
 
-export type AnyPluginData<TPluginType extends BasePluginType> =
+export type AnyPluginData<TPluginType extends AnyPluginType> =
   | GuildPluginData<TPluginType>
   | GlobalPluginData<TPluginType>;
 
-export function isGuildPluginData<TPluginType extends BasePluginType>(
+export function isGuildPluginData<TPluginType extends AnyPluginType>(
   pluginData: AnyPluginData<TPluginType> | BasePluginData<TPluginType>,
 ): pluginData is GuildPluginData<TPluginType> {
   return "context" in pluginData && pluginData.context === "guild";
 }
 
-export function isGlobalPluginData<TPluginType extends BasePluginType>(
+export function isGlobalPluginData<TPluginType extends AnyPluginType>(
   pluginData: AnyPluginData<TPluginType> | BasePluginData<TPluginType>,
 ): pluginData is GlobalPluginData<TPluginType> {
   return "context" in pluginData && pluginData.context === "global";

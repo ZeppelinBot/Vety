@@ -1,7 +1,7 @@
 import { DMChannel, type User } from "discord.js";
 import { hasPermission } from "../helpers.ts";
 import { type AnyPluginData, isGuildPluginData } from "../plugins/PluginData.ts";
-import type { BasePluginType } from "../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../plugins/pluginType.ts";
 import type { Awaitable } from "../utils.ts";
 import type { EventMeta, Listener } from "./BasePluginEventManager.ts";
 import type { EventArguments, ValidEvent } from "./eventTypes.ts";
@@ -9,7 +9,7 @@ import { eventToChannel, eventToGuild, eventToMessage, eventToUser } from "./eve
 
 export type EventFilter = <TEventName extends ValidEvent>(
   event: TEventName,
-  meta: EventMeta<AnyPluginData<BasePluginType>, EventArguments[TEventName]>,
+  meta: EventMeta<AnyPluginData<AnyPluginType>, EventArguments[TEventName]>,
 ) => Awaitable<boolean>;
 
 export type FilteredListener<T extends Listener<any, any>> = T;

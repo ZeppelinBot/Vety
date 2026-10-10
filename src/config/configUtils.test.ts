@@ -3,7 +3,7 @@ import * as assert from "node:assert/strict";
 import { z } from "zod";
 import type { PluginOptions } from "../index.ts";
 import type { GuildPluginData } from "../plugins/PluginData.ts";
-import type { BasePluginType } from "../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../plugins/pluginType.ts";
 import { sleep } from "../testUtils.ts";
 import type { CustomOverrideCriteriaFunctions } from "./configTypes.ts";
 import { getMatchingPluginConfig, mergeConfig } from "./configUtils.ts";
@@ -65,7 +65,7 @@ describe("configUtils", () => {
       value: z.number().default(5),
       hasAccess: z.boolean().default(false),
     });
-    interface SharedPluginType extends BasePluginType {
+    interface SharedPluginType extends AnyPluginType {
       configInput: z.input<typeof sharedConfigSchema>;
       configOutput: z.output<typeof sharedConfigSchema>;
     }
@@ -239,7 +239,7 @@ describe("configUtils", () => {
       const customConfigSchema = z.strictObject({
         value: z.number().default(5),
       });
-      interface CustomPluginType extends BasePluginType {
+      interface CustomPluginType extends AnyPluginType {
         configInput: z.input<typeof customConfigSchema>;
         configOutput: z.output<typeof customConfigSchema>;
         customOverrideCriteria: {
@@ -344,7 +344,7 @@ describe("configUtils", () => {
       const customConfigSchema = z.strictObject({
         value: z.number().default(5),
       });
-      interface CustomPluginType extends BasePluginType {
+      interface CustomPluginType extends AnyPluginType {
         configInput: z.input<typeof customConfigSchema>;
         configOutput: z.output<typeof customConfigSchema>;
         customOverrideCriteria: {
@@ -743,7 +743,7 @@ describe("configUtils", () => {
     });
 
     it("level matching against 0 works", async () => {
-      const pluginOpts: PluginOptions<BasePluginType> = {
+      const pluginOpts: PluginOptions<AnyPluginType> = {
         config: {
           value: 5,
         },
@@ -771,7 +771,7 @@ describe("configUtils", () => {
       // - Channel is 123, roles include 456, roles do NOT include 789
       // OR:
       // - Channel is 111, role is 222
-      const pluginOpts: PluginOptions<BasePluginType> = {
+      const pluginOpts: PluginOptions<AnyPluginType> = {
         config: {
           value: 5,
         },

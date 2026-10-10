@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import * as assert from "node:assert/strict";
 import { z } from "zod";
 import type { BasePluginData, GuildPluginData } from "../plugins/PluginData.ts";
-import type { BasePluginType } from "../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../plugins/pluginType.ts";
 import {
   createMockClient,
   createMockGuild,
@@ -25,7 +25,7 @@ describe("PluginConfigManager", () => {
         two: z.number().default(20),
       }),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -56,7 +56,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       can_do: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -103,7 +103,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       can_do: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -144,7 +144,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       something: z.number().default(0),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       config: typeof configSchema;
     }
 
@@ -180,7 +180,7 @@ describe("PluginConfigManager", () => {
           return Number.parseInt(val, 10);
         }),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -206,7 +206,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       works: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -246,7 +246,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       works: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -283,7 +283,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       works: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -320,7 +320,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       works: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -358,7 +358,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       works: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -396,7 +396,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       works: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -433,7 +433,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       works: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -470,7 +470,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       works: z.boolean().default(false),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -513,7 +513,7 @@ describe("PluginConfigManager", () => {
       dummy: z.number(),
       transformed: z.string().transform((v) => Number(v)),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -546,7 +546,7 @@ describe("PluginConfigManager", () => {
 
   it("reject invalid override criteria", async () => {
     const configSchema = z.strictObject({});
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }
@@ -616,7 +616,7 @@ describe("PluginConfigManager", () => {
     const configSchema = z.strictObject({
       value: z.number(),
     });
-    interface PluginType extends BasePluginType {
+    interface PluginType extends AnyPluginType {
       configInput: z.input<typeof configSchema>;
       configOutput: z.output<typeof configSchema>;
     }

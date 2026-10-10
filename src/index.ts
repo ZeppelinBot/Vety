@@ -7,7 +7,9 @@ export * from "./commands/messageCommands/messageCommandBlueprint.ts";
 export * from "./commands/slashCommands/slashCommandBlueprint.ts";
 export * from "./commands/slashCommands/slashCommandUtils.ts";
 export * from "./events/EventListenerBlueprint.ts";
-export * from "./plugins/PluginBlueprint.ts";
+export * from "#/plugins/GuildPlugin";
+export * from "#/plugins/GlobalPlugin";
+export * from "#/plugins/PluginBlueprint";
 export { Vety } from "./Vety.ts";
 
 export { configUtils };
@@ -30,7 +32,7 @@ export {
   pluginOverrideCriteriaSchema,
 } from "./config/configTypes.ts";
 export * from "./plugins/PluginData.ts";
-export type { BasePluginType } from "./plugins/pluginTypes.ts";
+export type { AnyPluginType } from "./plugins/pluginType.ts";
 export type {
   AnyContext,
   GlobalContext,

@@ -10,7 +10,7 @@ import type {
 } from "discord.js";
 import type z from "zod";
 import { type BasePluginData, isGuildPluginData } from "../plugins/PluginData.ts";
-import type { BasePluginType } from "../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../plugins/pluginType.ts";
 import { getMemberLevel, getMemberRoles } from "../plugins/pluginUtils.ts";
 import { ConfigValidationError } from "./ConfigValidationError.ts";
 import {
@@ -32,17 +32,20 @@ export interface ExtendedMatchParams extends MatchParams {
   interaction?: Interaction | null;
 }
 
-export interface PluginConfigManagerOpts<TPluginData extends BasePluginData<BasePluginType>> {
+export interface PluginConfigManagerOpts<TPluginData extends BasePluginData<AnyPluginType>> {
   configSchema: ZodType<TPluginData["_pluginType"]["configOutput"], TPluginData["_pluginType"]["configInput"]>;
   defaultOverrides: Array<PluginOverride<TPluginData["_pluginType"]>>;
   levels: PermissionLevels;
   customOverrideCriteriaFunctions?: CustomOverrideCriteriaFunctions<TPluginData>;
 }
 
-export class PluginConfigManager<TPluginData extends BasePluginData<BasePluginType>> {
+export class PluginConfigManager<TPluginData extends BasePluginData<AnyPluginType>> {
   private readonly userInput: unknown;
 
-  private readonly configSchema: ZodType<TPluginData["_pluginType"]["configOutput"], TPluginData["_pluginType"]["configInput"]>;
+  private readonly configSchema: ZodType<
+    TPluginData["_pluginType"]["configOutput"],
+    TPluginData["_pluginType"]["configInput"]
+  >;
   private readonly defaultOverrides: Array<PluginOverride<TPluginData["_pluginType"]>>;
   private readonly levels: PermissionLevels;
   private readonly customOverrideCriteriaFunctions?: CustomOverrideCriteriaFunctions<TPluginData>;
@@ -154,9 +157,7 @@ export class PluginConfigManager<TPluginData extends BasePluginData<BasePluginTy
     return this.baseConfig!;
   }
 
-  public getMatchingConfig(
-    matchParams: ExtendedMatchParams,
-  ): Promise<TPluginData["_pluginType"]["configOutput"]> {
+  public getMatchingConfig(matchParams: ExtendedMatchParams): Promise<TPluginData["_pluginType"]["configOutput"]> {
     const { message, interaction } = matchParams;
 
     const userId =

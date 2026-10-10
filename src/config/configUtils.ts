@@ -1,6 +1,6 @@
 import type z from "zod";
 import type { BasePluginData } from "../plugins/PluginData.ts";
-import type { BasePluginType } from "../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../plugins/pluginType.ts";
 import { typedKeys } from "../utils.ts";
 import type { CustomOverrideCriteriaFunctions, PluginOptions, PluginOverride } from "./configTypes.ts";
 import type { ZodType } from "zod";
@@ -65,7 +65,7 @@ export function mergeConfig<T extends Record<string, unknown>>(...sources: any[]
  * Returns matching plugin options for the specified matchParams based on overrides
  */
 export async function getMatchingPluginConfig<
-  TPluginType extends BasePluginType,
+  TPluginType extends AnyPluginType,
   TPluginData extends BasePluginData<TPluginType> = BasePluginData<TPluginType>,
   // Inferred type, should not be overridden
   TPluginOptions extends PluginOptions<TPluginData["_pluginType"]> = PluginOptions<TPluginData["_pluginType"]>,

@@ -3,24 +3,12 @@ import * as assert from "node:assert/strict";
 import type { ChatInputCommandInteraction, TextChannel } from "discord.js";
 import { parseSignature } from "knub-command-manager";
 import z from "zod";
-import { guildPluginMessageContextMenuCommand } from "../commands/contextMenuCommands/contextMenuCommandBlueprint.ts";
 import { PluginContextMenuCommandManager } from "../commands/contextMenuCommands/PluginContextMenuCommandManager.ts";
-import { guildPluginMessageCommand } from "../commands/messageCommands/messageCommandBlueprint.ts";
 import { PluginMessageCommandManager } from "../commands/messageCommands/PluginMessageCommandManager.ts";
 import { PluginSlashCommandManager } from "../commands/slashCommands/PluginSlashCommandManager.ts";
 import { PluginConfigManager } from "../config/PluginConfigManager.ts";
-import { globalPluginEventListener, guildPluginEventListener } from "../events/EventListenerBlueprint.ts";
 import { GlobalPluginEventManager } from "../events/GlobalPluginEventManager.ts";
 import { GuildPluginEventManager } from "../events/GuildPluginEventManager.ts";
-import {
-  CooldownManager,
-  type GlobalPluginBlueprint,
-  type GlobalPluginData,
-  guildPluginSlashCommand,
-  guildPluginSlashGroup,
-  LockManager,
-  slashOptions,
-} from "../index.ts";
 import {
   assertTypeEquals,
   createMockClient,
@@ -35,24 +23,33 @@ import {
   withVety,
 } from "../testUtils.ts";
 import { noop } from "../utils.ts";
-import { type AnyPluginBlueprint, type GuildPluginBlueprint, globalPlugin, guildPlugin } from "./PluginBlueprint.ts";
 import { type GuildPluginData, isGlobalPluginData } from "./PluginData.ts";
-import type { BasePluginType } from "./pluginTypes.ts";
+import type { AnyPluginType } from "./pluginType.ts";
+import { guildPluginContract, type GuildPluginBlueprint } from "#/plugins/GuildPlugin";
+import { globalPluginContract } from "#/plugins/GlobalPlugin";
+import { slashOptions } from "#/commands/slashCommands/slashCommandOptions";
+import type { AnyPluginBlueprint } from "#/plugins/PluginBlueprint";
+import { CooldownManager } from "#/cooldowns/CooldownManager";
+import { LockManager } from "#/locks/LockManager";
 
 type AssertEquals<TActual, TExpected> = TActual extends TExpected ? true : false;
 
 describe("PluginBlueprint", () => {
+  const emptyGuildPluginContract = guildPluginContract({ configSchema: z.strictObject({}) });
+  const emptyGlobalPluginContract = globalPluginContract({ configSchema: z.strictObject({}) });
+
   describe("Commands and events", () => {
     it("loads commands and events", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad = guildPlugin({
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
-          messageCommands: [guildPluginMessageCommand({ trigger: "foo", permission: null, run: noop })],
-          slashCommands: [guildPluginSlashCommand({ name: "bar", description: "", signature: [], run: noop })],
-          contextMenuCommands: [guildPluginMessageContextMenuCommand({ name: "baz", run: noop })],
-          events: [guildPluginEventListener({ event: "messageCreate", listener: noop })],
+          messageCommands: [emptyGuildPluginContract.messageCommand({ trigger: "foo", permission: null, run: noop })],
+          slashCommands: [
+            emptyGuildPluginContract.slashCommand({ name: "bar", description: "", signature: [], run: noop }),
+          ],
+          contextMenuCommands: [emptyGuildPluginContract.messageContextMenuCommand({ name: "baz", run: noop })],
+          events: [emptyGuildPluginContract.eventListener({ event: "messageCreate", listener: noop })],
 
           afterLoad(pluginData) {
             assert.strictEqual(pluginData.messageCommands.getAll().length, 1);
@@ -84,12 +81,11 @@ describe("PluginBlueprint", () => {
 
     it("guild events are only passed to the matching guild", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad = guildPlugin({
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           events: [
-            guildPluginEventListener({
+            emptyGuildPluginContract.eventListener({
               event: "messageCreate",
               listener({ pluginData, args }) {
                 assert.strictEqual(pluginData.guild.id, args.message.channel.guild.id);
@@ -146,13 +142,11 @@ describe("PluginBlueprint", () => {
 
     it("global events are not passed to guild event listeners", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad = guildPlugin({
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           events: [
-            // @ts-expect-error: "userUpdate" is not a valid guild event
-            guildPluginEventListener({
+            emptyGuildPluginContract.eventListener({
               // @ts-expect-error: "userUpdate" is not a valid guild event
               event: "userUpdate",
               listener() {
@@ -188,12 +182,11 @@ describe("PluginBlueprint", () => {
 
     it("global events are passed to global event listeners", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad = globalPlugin({
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           events: [
-            globalPluginEventListener({
+            emptyGlobalPluginContract.eventListener({
               event: "userUpdate",
               listener() {
                 done();
@@ -217,12 +210,11 @@ describe("PluginBlueprint", () => {
 
     it("guild events are passed to global event listeners", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad = globalPlugin({
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           events: [
-            globalPluginEventListener({
+            emptyGlobalPluginContract.eventListener({
               event: "messageCreate",
               listener({ pluginData, args }) {
                 assert.ok(isGlobalPluginData(pluginData));
@@ -262,31 +254,30 @@ describe("PluginBlueprint", () => {
             can_use_server_cmd: z.boolean().default(false),
             can_use_ping_cmd: z.boolean().default(false),
           });
-          interface PluginType extends BasePluginType {
-            configInput: z.input<typeof configSchema>;
-            configOutput: z.output<typeof configSchema>;
-          }
 
-          const TestPlugin = guildPlugin<PluginType>()({
-            name: "test-plugin",
+          const contract = guildPluginContract({
             configSchema,
+          });
+
+          const TestPlugin = contract.plugin({
+            name: "test-plugin",
 
             messageCommands: [
-              guildPluginMessageCommand({
+              contract.messageCommand({
                 trigger: "info",
                 permission: "can_use_info_cmd",
                 run({ message }) {
                   infoCmdCallUsers.push(message.author.id);
                 },
               }),
-              guildPluginMessageCommand({
+              contract.messageCommand({
                 trigger: "server",
                 permission: "can_use_server_cmd",
                 run({ message }) {
                   serverCmdCallUsers.push(message.author.id);
                 },
               }),
-              guildPluginMessageCommand({
+              contract.messageCommand({
                 trigger: "ping",
                 permission: "can_use_ping_cmd",
                 run({ message }) {
@@ -385,12 +376,11 @@ describe("PluginBlueprint", () => {
 
     describe("Slash commands", () => {
       it("Type inference in slash command function", () => {
-        guildPlugin({
+        emptyGuildPluginContract.plugin({
           name: "slash-test-plugin",
-          configSchema: z.strictObject({}),
 
           slashCommands: [
-            guildPluginSlashCommand({
+            emptyGuildPluginContract.slashCommand({
               name: "echo",
               description: "Repeat what you said",
               signature: [
@@ -416,27 +406,26 @@ describe("PluginBlueprint", () => {
       });
 
       it("Slash command group types", () => {
-        guildPlugin({
+        emptyGuildPluginContract.plugin({
           name: "slash-test-plugin",
-          configSchema: z.strictObject({}),
 
           slashCommands: [
-            guildPluginSlashGroup({
+            emptyGuildPluginContract.slashGroup({
               name: "top_level_group",
               description: "",
               subcommands: [
-                guildPluginSlashCommand({
+                emptyGuildPluginContract.slashCommand({
                   name: "one_level_down",
                   description: "",
                   signature: [],
                   run() {},
                 }),
 
-                guildPluginSlashGroup({
+                emptyGuildPluginContract.slashGroup({
                   name: "second_level_group",
                   description: "",
                   subcommands: [
-                    guildPluginSlashCommand({
+                    emptyGuildPluginContract.slashCommand({
                       name: "two_levels_down",
                       description: "",
                       signature: [],
@@ -455,14 +444,13 @@ describe("PluginBlueprint", () => {
   describe("Lifecycle hooks", () => {
     it("GuildPlugin beforeLoad()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           beforeLoad() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToLoad],
@@ -482,14 +470,13 @@ describe("PluginBlueprint", () => {
 
     it("GlobalPlugin beforeLoad()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           beforeLoad() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToLoad],
@@ -503,14 +490,13 @@ describe("PluginBlueprint", () => {
 
     it("GuildPlugin beforeStart()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           beforeStart() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToLoad],
@@ -530,14 +516,13 @@ describe("PluginBlueprint", () => {
 
     it("GlobalPlugin beforeStart()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           beforeStart() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToLoad],
@@ -551,14 +536,13 @@ describe("PluginBlueprint", () => {
 
     it("GuildPlugin afterLoad()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           afterLoad() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToLoad],
@@ -578,14 +562,13 @@ describe("PluginBlueprint", () => {
 
     it("GlobalPlugin afterLoad()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           afterLoad() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToLoad],
@@ -599,9 +582,8 @@ describe("PluginBlueprint", () => {
 
     it("GuildPlugin beforeUnload()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToUnload = emptyGuildPluginContract.plugin({
           name: "plugin-to-unload",
-          configSchema: z.strictObject({}),
 
           afterLoad() {
             vety.client.emit("guildUnavailable", guild);
@@ -610,7 +592,7 @@ describe("PluginBlueprint", () => {
           beforeUnload() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToUnload],
@@ -630,14 +612,13 @@ describe("PluginBlueprint", () => {
 
     it("GlobalPlugin beforeUnload()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           beforeUnload() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToLoad],
@@ -652,9 +633,8 @@ describe("PluginBlueprint", () => {
 
     it("GuildPlugin afterUnload()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToUnload = emptyGuildPluginContract.plugin({
           name: "plugin-to-unload",
-          configSchema: z.strictObject({}),
 
           afterLoad() {
             vety.client.emit("guildUnavailable", guild);
@@ -663,7 +643,7 @@ describe("PluginBlueprint", () => {
           afterUnload() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToUnload],
@@ -683,14 +663,13 @@ describe("PluginBlueprint", () => {
 
     it("GlobalPlugin afterUnload()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           afterUnload() {
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToLoad],
@@ -707,9 +686,8 @@ describe("PluginBlueprint", () => {
       withVety(testDone, async (createVety, done) => {
         let beforeLoadCalled = false;
 
-        const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           beforeLoad() {
             beforeLoadCalled = true;
@@ -719,7 +697,7 @@ describe("PluginBlueprint", () => {
             assert.strictEqual(beforeLoadCalled, true);
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToLoad],
@@ -741,9 +719,8 @@ describe("PluginBlueprint", () => {
       withVety(testDone, async (createVety, done) => {
         let beforeLoadCalled = false;
 
-        const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           beforeLoad() {
             beforeLoadCalled = true;
@@ -753,7 +730,7 @@ describe("PluginBlueprint", () => {
             assert.strictEqual(beforeLoadCalled, true);
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToLoad],
@@ -769,9 +746,8 @@ describe("PluginBlueprint", () => {
       withVety(testDone, async (createVety, done) => {
         let beforeUnloadCalled = false;
 
-        const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToUnload = emptyGuildPluginContract.plugin({
           name: "plugin-to-unload",
-          configSchema: z.strictObject({}),
 
           afterLoad() {
             vety.client.emit("guildUnavailable", guild);
@@ -785,7 +761,7 @@ describe("PluginBlueprint", () => {
             assert.strictEqual(beforeUnloadCalled, true);
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToUnload],
@@ -807,9 +783,8 @@ describe("PluginBlueprint", () => {
       withVety(testDone, async (createVety, done) => {
         let beforeUnloadCalled = false;
 
-        const PluginToUnload: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToUnload = emptyGlobalPluginContract.plugin({
           name: "plugin-to-unload",
-          configSchema: z.strictObject({}),
 
           beforeUnload() {
             beforeUnloadCalled = true;
@@ -819,7 +794,7 @@ describe("PluginBlueprint", () => {
             assert.strictEqual(beforeUnloadCalled, true);
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToUnload],
@@ -834,16 +809,15 @@ describe("PluginBlueprint", () => {
 
     it("hasPlugin() and getPlugin() are unavailable in GuildPlugin beforeLoad()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           beforeLoad(pluginData) {
             assert.throws(() => pluginData.hasPlugin({} as AnyPluginBlueprint));
             assert.throws(() => pluginData.getPlugin({} as AnyPluginBlueprint));
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToLoad],
@@ -863,16 +837,15 @@ describe("PluginBlueprint", () => {
 
     it("hasPlugin() and getPlugin() are unavailable in GlobalPlugin beforeLoad()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           beforeLoad(pluginData) {
             assert.throws(() => pluginData.hasPlugin({} as AnyPluginBlueprint));
             assert.throws(() => pluginData.getPlugin({} as AnyPluginBlueprint));
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToLoad],
@@ -886,9 +859,8 @@ describe("PluginBlueprint", () => {
 
     it("hasPlugin() and getPlugin() are unavailable in GuildPlugin afterUnload()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToUnload = emptyGuildPluginContract.plugin({
           name: "plugin-to-unload",
-          configSchema: z.strictObject({}),
 
           afterLoad() {
             vety.client.emit("guildUnavailable", guild);
@@ -899,7 +871,7 @@ describe("PluginBlueprint", () => {
             assert.throws(() => pluginData.getPlugin({} as AnyPluginBlueprint));
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToUnload],
@@ -919,16 +891,15 @@ describe("PluginBlueprint", () => {
 
     it("hasPlugin() and getPlugin() are unavailable in GlobalPlugin afterUnload()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           afterUnload(pluginData) {
             assert.throws(() => pluginData.hasPlugin({} as AnyPluginBlueprint));
             assert.throws(() => pluginData.getPlugin({} as AnyPluginBlueprint));
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToLoad],
@@ -943,18 +914,16 @@ describe("PluginBlueprint", () => {
 
     it("GuildPlugin is unavailable to other plugins during afterUnload()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginWithPublicInterface = guildPlugin<BasePluginType>()({
+        const PluginWithPublicInterface = emptyGuildPluginContract.plugin({
           name: "plugin-with-public-interface",
-          configSchema: z.strictObject({}),
 
           public() {
             return {};
           },
         });
 
-        const PluginWithTests: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginWithTests = emptyGuildPluginContract.plugin({
           name: "plugin-with-tests",
-          configSchema: z.strictObject({}),
           dependencies: () => [PluginWithPublicInterface],
           afterLoad() {
             vety.client.emit("guildUnavailable", guild);
@@ -963,7 +932,7 @@ describe("PluginBlueprint", () => {
             assert.throws(() => pluginData.getPlugin(PluginWithPublicInterface));
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginWithPublicInterface, PluginWithTests],
@@ -983,18 +952,16 @@ describe("PluginBlueprint", () => {
 
     it("GlobalPlugin is unavailable to other plugins during afterUnload()", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const PluginWithPublicInterface = globalPlugin<BasePluginType>()({
+        const PluginWithPublicInterface = emptyGlobalPluginContract.plugin({
           name: "plugin-with-public-interface",
-          configSchema: z.strictObject({}),
 
           public() {
             return {};
           },
         });
 
-        const PluginWithTests: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginWithTests = emptyGlobalPluginContract.plugin({
           name: "plugin-with-tests",
-          configSchema: z.strictObject({}),
           dependencies: () => [PluginWithPublicInterface],
           afterLoad() {
             void vety.destroy();
@@ -1003,7 +970,7 @@ describe("PluginBlueprint", () => {
             assert.throws(() => pluginData.getPlugin(PluginWithPublicInterface));
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginWithPublicInterface, PluginWithTests],
@@ -1019,9 +986,8 @@ describe("PluginBlueprint", () => {
       withVety(testDone, async (createVety, done) => {
         let lastCalledHook: string | null = null;
 
-        const PluginToLoad: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
           beforeLoad() {
             assert.strictEqual(lastCalledHook, null);
             lastCalledHook = "beforeLoad";
@@ -1043,7 +1009,7 @@ describe("PluginBlueprint", () => {
             assert.strictEqual(lastCalledHook, "beforeUnload");
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToLoad],
@@ -1065,9 +1031,8 @@ describe("PluginBlueprint", () => {
       withVety(testDone, async (createVety, done) => {
         let lastCalledHook: string | null = null;
 
-        const PluginToLoad: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const PluginToLoad = emptyGlobalPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
           beforeLoad() {
             assert.strictEqual(lastCalledHook, null);
             lastCalledHook = "beforeLoad";
@@ -1089,7 +1054,7 @@ describe("PluginBlueprint", () => {
             assert.strictEqual(lastCalledHook, "beforeUnload");
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [PluginToLoad],
@@ -1105,20 +1070,17 @@ describe("PluginBlueprint", () => {
   describe("Dependencies", () => {
     it("hasPlugin", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const DependencyToLoad = guildPlugin({
+        const DependencyToLoad = emptyGuildPluginContract.plugin({
           name: "dependency-to-load",
-          configSchema: z.strictObject({}),
         });
 
-        const SomeOtherPlugin = guildPlugin({
+        const SomeOtherPlugin = emptyGuildPluginContract.plugin({
           name: "some-other-plugin",
-          configSchema: z.strictObject({}),
         });
 
-        const PluginToLoad = guildPlugin({
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
           dependencies: () => [DependencyToLoad],
-          configSchema: z.strictObject({}),
 
           afterLoad(pluginData) {
             assert.ok(pluginData.hasPlugin(DependencyToLoad));
@@ -1145,13 +1107,17 @@ describe("PluginBlueprint", () => {
 
     it("getPlugin", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        interface DependencyPluginType extends BasePluginType {
+        interface DependencyPluginType extends AnyPluginType {
           state: { value: number };
         }
 
-        const DependencyToLoad = guildPlugin<DependencyPluginType>()({
-          name: "dependency-to-load",
+        const dependencyContract = guildPluginContract({
           configSchema: z.strictObject({}),
+          stateSchema: z.strictObject({ value: z.number() }),
+        });
+
+        const DependencyToLoad = dependencyContract.plugin({
+          name: "dependency-to-load",
 
           public(pluginData) {
             return {
@@ -1167,9 +1133,8 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const PluginToLoad = guildPlugin({
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           afterLoad(pluginData) {
             const instance = pluginData.getPlugin(DependencyToLoad);
@@ -1195,9 +1160,8 @@ describe("PluginBlueprint", () => {
 
     it("hasGlobalPlugin", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const SomeGlobalPlugin = globalPlugin({
+        const SomeGlobalPlugin = emptyGlobalPluginContract.plugin({
           name: "some-global-plugin",
-          configSchema: z.strictObject({}),
           public() {
             return {
               works: () => true,
@@ -1205,9 +1169,8 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const SomeGuildPlugin = guildPlugin({
+        const SomeGuildPlugin = emptyGuildPluginContract.plugin({
           name: "some-guild-plugin",
-          configSchema: z.strictObject({}),
 
           beforeLoad(pluginData) {
             const hasGlobalPlugin = pluginData.hasGlobalPlugin(SomeGlobalPlugin);
@@ -1235,9 +1198,8 @@ describe("PluginBlueprint", () => {
 
     it("getPlugin", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const SomeGlobalPlugin = globalPlugin({
+        const SomeGlobalPlugin = emptyGlobalPluginContract.plugin({
           name: "some-global-plugin",
-          configSchema: z.strictObject({}),
           public() {
             return {
               works: () => true,
@@ -1245,9 +1207,8 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const SomeGuildPlugin = guildPlugin({
+        const SomeGuildPlugin = emptyGuildPluginContract.plugin({
           name: "some-guild-plugin",
-          configSchema: z.strictObject({}),
 
           beforeLoad(pluginData) {
             const globalPlugin = pluginData.getGlobalPlugin(SomeGlobalPlugin);
@@ -1275,11 +1236,14 @@ describe("PluginBlueprint", () => {
 
     it("getPlugin has correct pluginData", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const DependencyToLoad = guildPlugin({
-          name: "dependency-to-load",
+        const dependencyContract = guildPluginContract({
           configSchema: z.strictObject({
             some_value: z.string().default("cookies"),
           }),
+        });
+
+        const DependencyToLoad = dependencyContract.plugin({
+          name: "dependency-to-load",
 
           public(pluginData) {
             return {
@@ -1294,11 +1258,14 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const PluginToLoad = guildPlugin({
-          name: "plugin-to-load",
+        const pluginContract = guildPluginContract({
           configSchema: z.strictObject({
             some_value: z.string().default("milk"),
           }),
+        });
+
+        const PluginToLoad = pluginContract.plugin({
+          name: "plugin-to-load",
 
           afterLoad(pluginData) {
             const instance = pluginData.getPlugin(DependencyToLoad);
@@ -1324,19 +1291,16 @@ describe("PluginBlueprint", () => {
 
     it("automatic dependency loading", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const DependencyToLoad = guildPlugin({
+        const DependencyToLoad = emptyGuildPluginContract.plugin({
           name: "dependency-to-load",
-          configSchema: z.strictObject({}),
         });
 
-        const OtherDependencyToLoad = guildPlugin({
+        const OtherDependencyToLoad = emptyGuildPluginContract.plugin({
           name: "other-dependency-to-load",
-          configSchema: z.strictObject({}),
         });
 
-        const PluginToLoad = guildPlugin({
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           dependencies: () => [DependencyToLoad, OtherDependencyToLoad],
 
@@ -1365,19 +1329,16 @@ describe("PluginBlueprint", () => {
 
     it("transitive dependencies", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const DependencyTwo = guildPlugin({
+        const DependencyTwo = emptyGuildPluginContract.plugin({
           name: "dependency-two",
-          configSchema: z.strictObject({}),
         });
-        const DependencyOne = guildPlugin({
+        const DependencyOne = emptyGuildPluginContract.plugin({
           name: "dependency-one",
-          configSchema: z.strictObject({}),
           dependencies: () => [DependencyTwo],
         });
 
-        const PluginToLoad = guildPlugin({
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
 
           dependencies: () => [DependencyOne],
 
@@ -1406,12 +1367,11 @@ describe("PluginBlueprint", () => {
 
     it("plugins loaded as dependencies do not load commands or events", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const Dependency = guildPlugin({
+        const Dependency = emptyGuildPluginContract.plugin({
           name: "dependency",
-          configSchema: z.strictObject({}),
 
-          messageCommands: [guildPluginMessageCommand({ trigger: "foo", permission: null, run: noop })],
-          events: [guildPluginEventListener({ event: "messageCreate", listener: noop })],
+          messageCommands: [emptyGuildPluginContract.messageCommand({ trigger: "foo", permission: null, run: noop })],
+          events: [emptyGuildPluginContract.eventListener({ event: "messageCreate", listener: noop })],
 
           afterLoad(pluginData) {
             // The command above should *not* be loaded
@@ -1423,9 +1383,8 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const PluginToLoad = guildPlugin({
+        const PluginToLoad = emptyGuildPluginContract.plugin({
           name: "plugin-to-load",
-          configSchema: z.strictObject({}),
           dependencies: () => [Dependency],
         });
 
@@ -1451,24 +1410,24 @@ describe("PluginBlueprint", () => {
       withVety(testDone, async (createVety, done) => {
         let commandTriggers = 0;
 
-        interface PluginType extends BasePluginType {
-          customOverrideCriteria: {
-            myUserOverride: string;
-          };
-        }
-
-        const TestPlugin = guildPlugin<PluginType>()({
-          name: "test-plugin",
+        const contract = guildPluginContract({
           configSchema: z.strictObject({
             can_do: z.boolean().default(false),
           }),
+          customOverrideCriteriaSchema: z.strictObject({
+            myUserOverride: z.string(),
+          }),
+        });
+
+        const TestPlugin = contract.plugin({
+          name: "test-plugin",
 
           customOverrideCriteriaFunctions: {
             myUserOverride: (pluginData, matchParams, value) => matchParams.userId === value,
           },
 
           messageCommands: [
-            guildPluginMessageCommand({
+            contract.messageCommand({
               trigger: "foo",
               permission: "can_do",
               run() {
@@ -1536,17 +1495,17 @@ describe("PluginBlueprint", () => {
       withVety(testDone, async (createVety, done) => {
         let commandTriggers = 0;
 
-        interface PluginType extends BasePluginType {
-          customOverrideCriteria: {
-            myAsyncUserOverride: string;
-          };
-        }
-
-        const TestPlugin = guildPlugin<PluginType>()({
-          name: "test-plugin",
+        const contract = guildPluginContract({
           configSchema: z.strictObject({
             can_do: z.boolean().default(false),
           }),
+          customOverrideCriteriaSchema: z.strictObject({
+            myAsyncUserOverride: z.string(),
+          }),
+        });
+
+        const TestPlugin = contract.plugin({
+          name: "test-plugin",
 
           customOverrideCriteriaFunctions: {
             myAsyncUserOverride: async (pluginData, matchParams, value) => {
@@ -1556,7 +1515,7 @@ describe("PluginBlueprint", () => {
           },
 
           messageCommands: [
-            guildPluginMessageCommand({
+            contract.messageCommand({
               trigger: "foo",
               permission: "can_do",
               run() {
@@ -1631,12 +1590,11 @@ describe("PluginBlueprint", () => {
           },
         };
 
-        const TestPlugin = guildPlugin({
+        const TestPlugin = emptyGuildPluginContract.plugin({
           name: "test-plugin",
-          configSchema: z.strictObject({}),
 
           messageCommands: [
-            guildPluginMessageCommand({
+            emptyGuildPluginContract.messageCommand({
               trigger: "foo",
               permission: null,
               signature: parseSignature("<str:foo>", types, "foo"),
@@ -1680,9 +1638,8 @@ describe("PluginBlueprint", () => {
   describe("Misc", () => {
     it("pluginData contains everything (guild plugin)", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const TestPlugin: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const TestPlugin = emptyGuildPluginContract.plugin({
           name: "test-plugin",
-          configSchema: z.strictObject({}),
 
           afterLoad(pluginData) {
             assert.ok(pluginData.client != null);
@@ -1695,7 +1652,7 @@ describe("PluginBlueprint", () => {
             assert.ok((pluginData.locks as unknown) instanceof LockManager);
             done();
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [TestPlugin],
@@ -1715,9 +1672,8 @@ describe("PluginBlueprint", () => {
 
     it("pluginData contains everything (global plugin)", (_, testDone) => {
       withVety(testDone, async (createVety, done) => {
-        const TestPlugin: GlobalPluginBlueprint<GlobalPluginData<BasePluginType>, any> = {
+        const TestPlugin = emptyGlobalPluginContract.plugin({
           name: "test-plugin",
-          configSchema: z.strictObject({}),
 
           afterLoad(pluginData) {
             assert.ok(pluginData.client != null);
@@ -1730,7 +1686,7 @@ describe("PluginBlueprint", () => {
             assert.ok((pluginData.locks as unknown) instanceof LockManager);
             done();
           },
-        };
+        });
 
         const vety = createVety({
           globalPlugins: [TestPlugin],
@@ -1746,7 +1702,7 @@ describe("PluginBlueprint", () => {
       withVety(testDone, async (createVety, done) => {
         let msgEvFnCallNum = 0;
 
-        const messageEv = guildPluginEventListener({
+        const messageEv = emptyGuildPluginContract.eventListener({
           event: "messageCreate",
           listener() {
             msgEvFnCallNum++;
@@ -1763,15 +1719,14 @@ describe("PluginBlueprint", () => {
           },
         });
 
-        const PluginToUnload: GuildPluginBlueprint<GuildPluginData<BasePluginType>, any> = {
+        const PluginToUnload = emptyGuildPluginContract.plugin({
           name: "plugin-to-unload",
-          configSchema: z.strictObject({}),
           events: [messageEv],
           afterLoad() {
             const msg = createMockMessage(vety.client, textChannel, author, { content: "hi!" });
             vety.client.emit("messageCreate", msg);
           },
-        };
+        });
 
         const vety = createVety({
           guildPlugins: [PluginToUnload],
@@ -1792,77 +1747,357 @@ describe("PluginBlueprint", () => {
     });
   });
 
-  describe("plugin() helper", () => {
-    it("(blueprint)", () => {
-      const blueprint = guildPlugin({
-        name: "my-plugin",
-        configSchema: z.strictObject({}),
-      });
+  describe("guildPluginContract()", () => {
+    const configSchema = z.strictObject({
+      example: z.number().transform((v) => String(v)),
+    });
+    const stateSchema = z.strictObject({
+      storedValue: z.string(),
+    });
+    const customOverrideMatchParamsSchema = z.strictObject({
+      matchParamColor: z.string(),
+    });
+    const testContract = guildPluginContract({
+      configSchema,
+      stateSchema,
+      customOverrideCriteriaSchema: z.strictObject({
+        criteriaColor: z.string(),
+      }),
+      customOverrideMatchParamsSchema,
+    });
+    type ConfigSchemaOutput = z.output<typeof configSchema>;
+    type StateSchemaOutput = z.output<typeof stateSchema>;
+    type CustomOverrideMatchParamsSchemaOutput = z.output<typeof customOverrideMatchParamsSchema>;
 
-      assert.strictEqual(blueprint.name, "my-plugin");
+    it("config schema is included in blueprint", () => {
+      const plugin = testContract.plugin({
+        name: "my-plugin",
+      });
+      assert.strictEqual(plugin.configSchema, configSchema);
     });
 
-    interface CustomPluginType extends BasePluginType {
-      state: {
-        foo: 5;
-      };
-    }
+    it("config type is inferred correctly", () => {
+      testContract.plugin({
+        name: "",
+        beforeLoad(pluginData) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
 
-    it("<TPluginType>()(blueprint)", () => {
-      const blueprint = guildPlugin<CustomPluginType>()({
-        name: "my-plugin",
-        configSchema: z.strictObject({}),
+      testContract.messageCommand({
+        trigger: "",
+        permission: null,
+        run({ pluginData }) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
 
+      testContract.slashCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
+
+      testContract.messageContextMenuCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
+
+      testContract.userContextMenuCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
+    });
+
+    it("state type is inferred correctly", () => {
+      testContract.plugin({
+        name: "",
         beforeLoad(pluginData) {
           /* oxlint-disable-next-line no-unused-vars */
-          const typeCheck: AssertEquals<typeof pluginData, GuildPluginData<CustomPluginType>> = true;
-        },
-        afterLoad(pluginData) {
-          /* oxlint-disable-next-line no-unused-vars */
-          const typeCheck: AssertEquals<typeof pluginData, GuildPluginData<CustomPluginType>> = true;
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
         },
       });
 
-      assert.strictEqual(blueprint.name, "my-plugin");
+      testContract.messageCommand({
+        trigger: "",
+        permission: null,
+        run({ pluginData }) {
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
+        },
+      });
+
+      testContract.slashCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
+        },
+      });
+
+      testContract.messageContextMenuCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
+        },
+      });
+
+      testContract.userContextMenuCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
+        },
+      });
     });
-  });
 
-  describe("Public interfaces", () => {
-    it("Public interface type inference works", () => {
-      interface OtherPluginType extends BasePluginType {
-        state: {
-          foo: 5;
-        };
-      }
-
-      const OtherPlugin = guildPlugin<OtherPluginType>()({
-        name: "other-plugin",
-        configSchema: z.strictObject({}),
-
-        public(pluginData) {
-          return {
-            /* oxlint-disable-next-line no-unused-vars */
-            myFn(param: "a constant string") {
-              /* oxlint-disable-next-line no-unused-vars */
-              const result: AssertEquals<typeof pluginData.state.foo, OtherPluginType["state"]["foo"]> = true;
-            },
-          };
-        },
+    it("custom override criteria type is inferred correctly", () => {
+      testContract.plugin({
+        name: "",
+        // @ts-expect-error: error on missing criteriaColor function
+        customOverrideCriteriaFunctions: {},
       });
+    });
 
-      guildPlugin({
-        name: "main-plugin",
-        configSchema: z.strictObject({}),
-
-        afterLoad(pluginData) {
-          const otherPlugin = pluginData.getPlugin(OtherPlugin);
-
-          /* oxlint-disable-next-line no-unused-vars */
-          const result: AssertEquals<Parameters<typeof otherPlugin.myFn>[0], "a constant string"> = true;
+    it("custom override match params type is inferred correctly", () => {
+      testContract.plugin({
+        name: "",
+        customOverrideCriteriaFunctions: {
+          // Type-only test:
+          criteriaColor: (_pluginData, matchParams) => {
+            /* oxlint-disable-next-line no-unused-vars */
+            const typeCheck: AssertEquals<typeof matchParams.extra, CustomOverrideMatchParamsSchemaOutput | undefined> =
+              true;
+            return true;
+          },
         },
       });
     });
 
     // Note: public interface *functionality* is already tested by Dependencies#getPlugin above
+    it("public interface type is inferred correctly", () => {
+      const pluginWithInterface = emptyGuildPluginContract.plugin({
+        name: "plugin-with-interface",
+        public() {
+          return {
+            foo: () => 5,
+          };
+        },
+      });
+
+      emptyGuildPluginContract.plugin({
+        name: "regular-plugin",
+        afterLoad(pluginData) {
+          const publicInterface = pluginData.getPlugin(pluginWithInterface);
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof publicInterface, { foo: () => number }> = true;
+        },
+      });
+    });
+  });
+
+  describe("globalPluginContract()", () => {
+    const configSchema = z.strictObject({
+      example: z.number().transform((v) => String(v)),
+    });
+    const stateSchema = z.strictObject({
+      storedValue: z.string(),
+    });
+    const customOverrideMatchParamsSchema = z.strictObject({
+      matchParamColor: z.string(),
+    });
+    const testContract = globalPluginContract({
+      configSchema,
+      stateSchema,
+      customOverrideCriteriaSchema: z.strictObject({
+        criteriaColor: z.string(),
+      }),
+      customOverrideMatchParamsSchema,
+    });
+    type ConfigSchemaOutput = z.output<typeof configSchema>;
+    type StateSchemaOutput = z.output<typeof stateSchema>;
+    type CustomOverrideMatchParamsSchemaOutput = z.output<typeof customOverrideMatchParamsSchema>;
+
+    it("config schema is included in blueprint", () => {
+      const plugin = testContract.plugin({
+        name: "my-plugin",
+      });
+      assert.strictEqual(plugin.configSchema, configSchema);
+    });
+
+    it("config type is inferred correctly", () => {
+      testContract.plugin({
+        name: "",
+        beforeLoad(pluginData) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
+
+      testContract.messageCommand({
+        trigger: "",
+        permission: null,
+        run({ pluginData }) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
+
+      testContract.slashCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
+
+      testContract.messageContextMenuCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
+
+      testContract.userContextMenuCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          const config = pluginData.config.get();
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof config, ConfigSchemaOutput> = true;
+        },
+      });
+    });
+
+    it("state type is inferred correctly", () => {
+      testContract.plugin({
+        name: "",
+        beforeLoad(pluginData) {
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
+        },
+      });
+
+      testContract.messageCommand({
+        trigger: "",
+        permission: null,
+        run({ pluginData }) {
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
+        },
+      });
+
+      testContract.slashCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
+        },
+      });
+
+      testContract.messageContextMenuCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
+        },
+      });
+
+      testContract.userContextMenuCommand({
+        name: "",
+        description: "",
+        signature: [],
+        run({ pluginData }) {
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof pluginData.state, StateSchemaOutput> = true;
+        },
+      });
+    });
+
+    it("custom override criteria type is inferred correctly", () => {
+      testContract.plugin({
+        name: "",
+        // @ts-expect-error: error on missing criteriaColor function
+        customOverrideCriteriaFunctions: {},
+      });
+    });
+
+    it("custom override match params type is inferred correctly", () => {
+      testContract.plugin({
+        name: "",
+        customOverrideCriteriaFunctions: {
+          // Type-only test:
+          criteriaColor: (_pluginData, matchParams) => {
+            /* oxlint-disable-next-line no-unused-vars */
+            const typeCheck: AssertEquals<typeof matchParams.extra, CustomOverrideMatchParamsSchemaOutput | undefined> =
+              true;
+            return true;
+          },
+        },
+      });
+    });
+
+    // Note: public interface *functionality* is already tested by Dependencies#getPlugin above
+    it("public interface type is inferred correctly", () => {
+      const pluginWithInterface = emptyGlobalPluginContract.plugin({
+        name: "plugin-with-interface",
+        public() {
+          return {
+            foo: () => 5,
+          };
+        },
+      });
+
+      emptyGlobalPluginContract.plugin({
+        name: "regular-plugin",
+        afterLoad(pluginData) {
+          const publicInterface = pluginData.getPlugin(pluginWithInterface);
+          /* oxlint-disable-next-line no-unused-vars */
+          const typeCheck: AssertEquals<typeof publicInterface, { foo: () => number }> = true;
+        },
+      });
+    });
   });
 });

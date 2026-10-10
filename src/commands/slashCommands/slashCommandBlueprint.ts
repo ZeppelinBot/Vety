@@ -1,6 +1,6 @@
 import type { Locale, Permissions } from "discord.js";
 import type { AnyPluginData, GlobalPluginData, GuildPluginData } from "../../plugins/PluginData.ts";
-import type { BasePluginType } from "../../plugins/pluginTypes.ts";
+import type { AnyPluginType } from "../../plugins/pluginType.ts";
 import type { BaseSlashCommandOption } from "./slashCommandOptions.ts";
 import type { SlashCommandFn, SlashCommandSignature } from "./slashCommandUtils.ts";
 
@@ -26,7 +26,7 @@ type SlashCommandBlueprintCreator<TPluginData extends AnyPluginData<any>> = <TSi
   blueprint: Omit<SlashCommandBlueprint<TPluginData, TSignature>, "type">,
 ) => SlashCommandBlueprint<TPluginData, TSignature>;
 
-function slashCommand<TPluginData extends AnyPluginData<BasePluginType>>(...args) {
+function slashCommand<TPluginData extends AnyPluginData<AnyPluginType>>(...args) {
   if (args.length === 1) {
     // (blueprint)
     // Return command blueprint
@@ -57,7 +57,7 @@ export function guildPluginSlashCommand<TSignature extends SlashCommandSignature
 /**
  * Specify `TPluginType` for type hints and return self
  */
-export function guildPluginSlashCommand<TPluginType extends BasePluginType>(): SlashCommandBlueprintCreator<
+export function guildPluginSlashCommand<TPluginType extends AnyPluginType>(): SlashCommandBlueprintCreator<
   GuildPluginData<TPluginType>
 >;
 
@@ -78,7 +78,7 @@ export function globalPluginSlashCommand<TSignature extends SlashCommandSignatur
 /**
  * Specify `TPluginType` for type hints and return self
  */
-export function globalPluginSlashCommand<TPluginType extends BasePluginType>(): SlashCommandBlueprintCreator<
+export function globalPluginSlashCommand<TPluginType extends AnyPluginType>(): SlashCommandBlueprintCreator<
   GlobalPluginData<TPluginType>
 >;
 

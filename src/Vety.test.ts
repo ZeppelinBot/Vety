@@ -3,7 +3,6 @@ import { describe, it } from "node:test";
 import * as assert from "node:assert/strict";
 import z from "zod/v4";
 import { guildPluginMessageCommand } from "./commands/messageCommands/messageCommandBlueprint.ts";
-import { guildPlugin } from "./plugins/PluginBlueprint.ts";
 import {
   createMockGuild,
   createMockMember,
@@ -15,15 +14,19 @@ import {
   withVety,
 } from "./testUtils.ts";
 import { noop } from "./utils.ts";
+import { guildPluginContract } from "#/plugins/GuildPlugin";
 
 describe("Vety", () => {
+  const emptyGuildPluginContract = guildPluginContract({
+    configSchema: z.strictObject({}),
+  });
+
   it("Multiple GUILD_CREATE events load guild's plugins only once", (_, testDone) => {
     withVety(testDone, async (createVety, done) => {
       let loadedTimes = 0;
 
-      const PluginToLoad = guildPlugin({
+      const PluginToLoad = emptyGuildPluginContract.plugin({
         name: "plugin-to-load",
-        configSchema: z.strictObject({}),
 
         afterLoad() {
           loadedTimes++;
@@ -65,9 +68,8 @@ describe("Vety", () => {
     withVety(testDone, async (createVety, done) => {
       let loadedTimes = 0;
 
-      const PluginToLoad = guildPlugin({
+      const PluginToLoad = emptyGuildPluginContract.plugin({
         name: "plugin-to-load",
-        configSchema: z.strictObject({}),
 
         afterLoad() {
           loadedTimes++;
@@ -105,9 +107,8 @@ describe("Vety", () => {
     withVety(testDone, async (createVety, done) => {
       let loadedTimes = 0;
 
-      const Plugin1 = guildPlugin({
+      const Plugin1 = emptyGuildPluginContract.plugin({
         name: "plugin1",
-        configSchema: z.strictObject({}),
 
         beforeLoad() {
           loadedTimes++;
@@ -118,9 +119,8 @@ describe("Vety", () => {
         },
       });
 
-      const PluginWithError = guildPlugin({
+      const PluginWithError = emptyGuildPluginContract.plugin({
         name: "plugin-with-error",
-        configSchema: z.strictObject({}),
 
         beforeStart() {
           throw new Error("Foo");
@@ -165,9 +165,8 @@ describe("Vety", () => {
       const loadTimeMs = 40;
       let loadedTimes = 0;
 
-      const PluginToLoad = guildPlugin({
+      const PluginToLoad = emptyGuildPluginContract.plugin({
         name: "plugin-to-load",
-        configSchema: z.strictObject({}),
 
         async beforeLoad() {
           await sleep(loadTimeMs);
@@ -208,9 +207,8 @@ describe("Vety", () => {
     withVety(testDone, async (createVety, done) => {
       let runCount = 0;
 
-      const DispatcherPlugin = guildPlugin({
+      const DispatcherPlugin = emptyGuildPluginContract.plugin({
         name: "dispatcher",
-        configSchema: z.strictObject({}),
         messageCommands: [
           guildPluginMessageCommand({
             trigger: "foo",
@@ -268,9 +266,8 @@ describe("Vety", () => {
   it("Unloading a guild waits for running event listeners to finish", (_, testDone) => {
     withVety(testDone, async (createVety, done) => {
       let listenerDone = false;
-      const Plugin = guildPlugin({
+      const Plugin = emptyGuildPluginContract.plugin({
         name: "plugin",
-        configSchema: z.strictObject({}),
         events: [
           {
             event: "messageCreate",
@@ -311,9 +308,8 @@ describe("Vety", () => {
   it("Unloading a guild deals with event registration race conditions", (_, testDone) => {
     withVety(testDone, async (createVety, done) => {
       let cnt = 1;
-      const Plugin = guildPlugin({
+      const Plugin = emptyGuildPluginContract.plugin({
         name: "plugin",
-        configSchema: z.strictObject({}),
         events: [
           {
             event: "messageCreate",

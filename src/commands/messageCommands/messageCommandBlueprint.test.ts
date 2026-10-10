@@ -2,12 +2,18 @@ import { describe, it } from "node:test";
 import * as assert from "node:assert/strict";
 import type { DMChannel, TextChannel } from "discord.js";
 import { number, string } from "knub-command-manager";
-import type { BasePluginType } from "../../index.ts";
-import { globalPluginMessageCommand, guildPluginMessageCommand } from "./messageCommandBlueprint.ts";
+import { guildPluginContract, type AnyPluginType } from "../../index.ts";
+import { z } from "zod";
 
 type AssertEquals<TActual, TExpected> = TActual extends TExpected ? true : false;
 
-describe("guildPluginMessageCommand() helper", () => {
+describe("guildPluginContract messageCommand() helper", () => {
+  const contact = guildPluginContract({
+    configSchema: z.strictObject({
+
+    }),
+  });
+
   it("(blueprint)", () => {
     const blueprint = guildPluginMessageCommand({
       trigger: "cmd",
@@ -28,7 +34,7 @@ describe("guildPluginMessageCommand() helper", () => {
     assert.notStrictEqual(blueprint.run, undefined);
   });
 
-  interface CustomPluginType extends BasePluginType {
+  interface CustomPluginType extends AnyPluginType {
     state: {
       foo: 5;
     };
@@ -128,7 +134,7 @@ describe("globalPluginMessageCommand() helper", () => {
     assert.notStrictEqual(blueprint.run, undefined);
   });
 
-  interface CustomPluginType extends BasePluginType {
+  interface CustomPluginType extends AnyPluginType {
     state: {
       foo: 5;
     };
